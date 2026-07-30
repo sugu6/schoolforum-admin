@@ -1,0 +1,88 @@
+{
+  "name": "arco-design-pro-vue",
+  "description": "海语校园论坛后台",
+  "version": "1.0.0",
+  "private": true,
+  "author": "ArcoDesign Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --config ./config/vite.config.dev.ts",
+    "build": "vue-tsc --noEmit && vite build --config ./config/vite.config.prod.ts",
+    "report": "cross-env REPORT=true pnpm run build",
+    "preview": "pnpm run build && vite preview --host",
+    "type:check": "vue-tsc --noEmit --skipLibCheck",
+    "lint-staged": "npx lint-staged",
+    "prepare": "husky install",
+    "security:check": "node scripts/security-check.js",
+    "security:audit": "pnpm audit --audit-level=moderate"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.vue": [
+      "stylelint --fix",
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{less,css}": [
+      "stylelint --fix",
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@arco-design/web-vue": "^2.55.0",
+    "@vueuse/core": "^12.0.0",
+    "axios": "^1.7.0",
+    "dayjs": "^1.11.13",
+    "dompurify": "^3.4.12",
+    "echarts": "^5.5.0",
+    "marked": "^18.0.3",
+    "mitt": "^3.0.1",
+    "nprogress": "^0.2.0",
+    "pinia": "^2.2.0",
+    "vue": "^3.5.0",
+    "vue-echarts": "^7.0.0",
+    "vue-i18n": "^10.0.0",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@arco-plugins/vite-vue": "^1.4.5",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@types/nprogress": "^0.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vitejs/plugin-vue-jsx": "^5.1.6",
+    "consola": "^3.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.0.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.0.0",
+    "eslint-import-resolver-typescript": "^3.6.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-vue": "^9.30.0",
+    "husky": "^9.0.0",
+    "less": "^4.2.0",
+    "lint-staged": "^15.0.0",
+    "postcss-html": "^1.7.0",
+    "prettier": "^3.4.0",
+    "stylelint": "^16.0.0",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-config-recommended-vue": "^1.5.0",
+    "stylelint-config-standard": "^36.0.0",
+    "stylelint-order": "^6.0.0",
+    "typescript": "^5.6.0",
+    "unplugin-vue-components": "^0.28.0",
+    "vite": "^8.1.5",
+    "vite-plugin-compression": "^0.5.1",
+    "vue-tsc": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

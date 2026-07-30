@@ -1,0 +1,125 @@
+<template>
+  <div v-if="html" class="markdown-body" v-html="html" />
+  <slot v-else />
+</template>
+
+<!-- eslint-disable-next-line vue/no-v-html -->
+<script lang="ts" setup>
+  import { computed } from 'vue';
+  import renderMarkdown from '@/utils/markdown';
+
+  const props = withDefaults(
+    defineProps<{
+      content: string;
+    }>(),
+    {
+      content: '',
+    },
+  );
+
+  const html = computed(() => renderMarkdown(props.content));
+</script>
+
+<style scoped lang="less">
+  .markdown-body {
+    line-height: 1.8;
+    word-break: break-word;
+
+    :deep(h1),
+    :deep(h2),
+    :deep(h3),
+    :deep(h4),
+    :deep(h5),
+    :deep(h6) {
+      margin: 16px 0 8px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    :deep(h1) {
+      font-size: 1.5em;
+    }
+
+    :deep(h2) {
+      font-size: 1.3em;
+    }
+
+    :deep(h3) {
+      font-size: 1.15em;
+    }
+
+    :deep(p) {
+      margin: 4px 0;
+    }
+
+    :deep(ul),
+    :deep(ol) {
+      padding-left: 20px;
+      margin: 4px 0;
+    }
+
+    :deep(li) {
+      margin: 2px 0;
+    }
+
+    :deep(blockquote) {
+      margin: 8px 0;
+      padding: 4px 12px;
+      border-left: 3px solid var(--color-border-2);
+      color: var(--color-text-2);
+    }
+
+    :deep(code) {
+      padding: 2px 6px;
+      font-size: 0.9em;
+      background: var(--color-fill-2);
+      border-radius: 3px;
+    }
+
+    :deep(pre) {
+      margin: 8px 0;
+      padding: 12px;
+      background: var(--color-fill-2);
+      border-radius: 6px;
+      overflow-x: auto;
+
+      code {
+        padding: 0;
+        background: transparent;
+      }
+    }
+
+    :deep(table) {
+      width: 100%;
+      margin: 8px 0;
+      border-collapse: collapse;
+    }
+
+    :deep(th),
+    :deep(td) {
+      padding: 6px 12px;
+      border: 1px solid var(--color-border-2);
+      text-align: left;
+    }
+
+    :deep(th) {
+      background: var(--color-fill-2);
+      font-weight: 600;
+    }
+
+    :deep(a) {
+      color: rgb(var(--primary-6));
+    }
+
+    :deep(img) {
+      max-width: 100%;
+      height: auto;
+    }
+
+    :deep(hr) {
+      margin: 12px 0;
+      border: none;
+      border-top: 1px solid var(--color-border-2);
+    }
+  }
+</style>
