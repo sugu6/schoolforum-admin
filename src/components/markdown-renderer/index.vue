@@ -3,7 +3,6 @@
   <slot v-else />
 </template>
 
-<!-- eslint-disable-next-line vue/no-v-html -->
 <script lang="ts" setup>
   import { computed } from 'vue';
   import renderMarkdown from '@/utils/markdown';
@@ -54,8 +53,8 @@
 
     :deep(ul),
     :deep(ol) {
-      padding-left: 20px;
       margin: 4px 0;
+      padding-left: 20px;
     }
 
     :deep(li) {
@@ -65,8 +64,8 @@
     :deep(blockquote) {
       margin: 8px 0;
       padding: 4px 12px;
-      border-left: 3px solid var(--color-border-2);
       color: var(--color-text-2);
+      border-left: 3px solid var(--color-border-2);
     }
 
     :deep(code) {
@@ -79,9 +78,9 @@
     :deep(pre) {
       margin: 8px 0;
       padding: 12px;
+      overflow-x: auto;
       background: var(--color-fill-2);
       border-radius: 6px;
-      overflow-x: auto;
 
       code {
         padding: 0;
@@ -98,13 +97,13 @@
     :deep(th),
     :deep(td) {
       padding: 6px 12px;
-      border: 1px solid var(--color-border-2);
       text-align: left;
+      border: 1px solid var(--color-border-2);
     }
 
     :deep(th) {
-      background: var(--color-fill-2);
       font-weight: 600;
+      background: var(--color-fill-2);
     }
 
     :deep(a) {
