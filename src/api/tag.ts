@@ -39,8 +39,13 @@ export async function createTag(data: TagCreateRequest): Promise<Tag> {
   return res.data;
 }
 
-export async function updateTag(id: number, data: TagUpdateRequest): Promise<Tag> {
-  const res = await axios.put<Tag>(`/tags/update/${id}`, null, { params: data });
+export async function updateTag(
+  id: number,
+  data: TagUpdateRequest,
+): Promise<Tag> {
+  const res = await axios.put<Tag>(`/tags/update/${id}`, null, {
+    params: data,
+  });
   return res.data;
 }
 

@@ -20,7 +20,7 @@ export interface RouteRecordItem {
  */
 export function findFirstPermissionRoute(
   userRole: string,
-  routes: RouteRecordItem[]
+  routes: RouteRecordItem[],
 ): RouteRecordItem | undefined {
   const queue: RouteRecordItem[] = [...routes];
   while (queue.length > 0) {

@@ -38,14 +38,21 @@ export interface AnnouncementListParams {
   pageSize: number;
 }
 
-export async function getAnnouncementList(params: AnnouncementListParams): Promise<PageResponse<Announcement>> {
-  const res = await axios.get<PageResponse<Announcement>>('/announcements/admin/list', {
-    params,
-  });
+export async function getAnnouncementList(
+  params: AnnouncementListParams,
+): Promise<PageResponse<Announcement>> {
+  const res = await axios.get<PageResponse<Announcement>>(
+    '/announcements/admin/list',
+    {
+      params,
+    },
+  );
   return res.data;
 }
 
-export async function createAnnouncement(data: AnnouncementCreateRequest): Promise<Announcement> {
+export async function createAnnouncement(
+  data: AnnouncementCreateRequest,
+): Promise<Announcement> {
   const res = await axios.post<Announcement>('/announcements', data);
   return res.data;
 }

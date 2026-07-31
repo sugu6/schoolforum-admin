@@ -32,8 +32,12 @@ export interface PostListParams {
   isEssential?: boolean;
 }
 
-export async function getPostList(params: PostListParams): Promise<PageResponse<Post>> {
-  const res = await axios.get<PageResponse<Post>>('/posts/list/page', { params });
+export async function getPostList(
+  params: PostListParams,
+): Promise<PageResponse<Post>> {
+  const res = await axios.get<PageResponse<Post>>('/posts/list/page', {
+    params,
+  });
   return res.data;
 }
 

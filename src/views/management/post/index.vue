@@ -38,7 +38,9 @@
         :pagination="pagination"
         :stripe="true"
         hoverable
-        :virtual-list-props="pagination.pageSize >= 50 ? { height: 600, threshold: 50 } : undefined"
+        :virtual-list-props="
+          pagination.pageSize >= 50 ? { height: 600, threshold: 50 } : undefined
+        "
         @page-change="onPageChange"
         @page-size-change="onPageSizeChange"
       >
@@ -387,9 +389,9 @@
 
 <style lang="less" scoped>
   .container {
+    min-height: 100%;
     padding: 20px;
     background: var(--color-bg-2);
-    min-height: 100%;
   }
 
   .general-card {
@@ -405,24 +407,24 @@
   }
 
   .tag {
+    flex-shrink: 0;
     margin-left: 6px;
     font-size: 11px;
-    flex-shrink: 0;
   }
 
   .name {
     max-width: 70px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: 13px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .meta-cell {
     display: flex;
-    align-items: center;
-    gap: 4px;
     flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
   }
 
   .stats-wrap {
@@ -432,23 +434,25 @@
 
   .stat-pill {
     display: inline-flex;
-    align-items: center;
     gap: 3px;
+    align-items: center;
     padding: 2px 8px;
-    border-radius: 10px;
+    color: var(--color-text-3);
     font-size: 12px;
     line-height: 20px;
     background: var(--color-fill-1);
-    color: var(--color-text-3);
+    border-radius: 10px;
 
     &.like {
       color: rgb(var(--red-5));
       background: rgba(var(--red-1), 0.5);
     }
+
     &.comment {
       color: rgb(var(--arcoblue-5));
       background: rgba(var(--arcoblue-1), 0.5);
     }
+
     &.star {
       color: rgb(var(--gold-6));
       background: rgba(var(--gold-1), 0.6);
@@ -457,11 +461,11 @@
 
   .post-content {
     max-height: 400px;
-    overflow-y: auto;
-    line-height: 1.8;
-    font-size: 13px;
-    background: var(--color-fill-1);
     padding: 12px 16px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.8;
+    background: var(--color-fill-1);
     border-radius: 6px;
   }
 </style>

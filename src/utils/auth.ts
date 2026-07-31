@@ -56,11 +56,21 @@ export const clearAllAuthData = () => {
   const keysToRemove: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && (key.includes('token') || key.includes('auth') || key.includes('user'))) {
+    if (
+      key &&
+      (key.includes('token') || key.includes('auth') || key.includes('user'))
+    ) {
       keysToRemove.push(key);
     }
   }
-  keysToRemove.forEach(key => localStorage.removeItem(key));
+  keysToRemove.forEach((key) => localStorage.removeItem(key));
 };
 
-export { isLogin, getToken, setToken, clearToken, getRefreshToken, setRefreshToken };
+export {
+  isLogin,
+  getToken,
+  setToken,
+  clearToken,
+  getRefreshToken,
+  setRefreshToken,
+};

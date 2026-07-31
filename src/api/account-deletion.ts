@@ -28,7 +28,9 @@ export interface AccountDeletionListParams {
   status?: 'PENDING' | 'CANCELLED' | 'COMPLETED';
 }
 
-export async function getAccountDeletionList(params: AccountDeletionListParams): Promise<PageResponse<AccountDeletionRequest>> {
+export async function getAccountDeletionList(
+  params: AccountDeletionListParams,
+): Promise<PageResponse<AccountDeletionRequest>> {
   const res = await axios.get<PageResponse<AccountDeletionRequest>>(
     '/account-deletion/list/page',
     { params },
@@ -36,10 +38,16 @@ export async function getAccountDeletionList(params: AccountDeletionListParams):
   return res.data;
 }
 
-export async function requestAccountDeletion(reason?: string): Promise<AccountDeletionRequest> {
-  const res = await axios.post<AccountDeletionRequest>('/users/deletion/request', null, {
-    params: { reason },
-  });
+export async function requestAccountDeletion(
+  reason?: string,
+): Promise<AccountDeletionRequest> {
+  const res = await axios.post<AccountDeletionRequest>(
+    '/users/deletion/request',
+    null,
+    {
+      params: { reason },
+    },
+  );
   return res.data;
 }
 

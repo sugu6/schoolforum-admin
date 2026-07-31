@@ -67,9 +67,7 @@ export async function queryDashboardStats(): Promise<DashboardStats> {
     categories: Array.isArray(categoriesRes.data)
       ? (categoriesRes.data as unknown[]).length
       : 0,
-    tags: Array.isArray(tagsRes.data)
-      ? (tagsRes.data as unknown[]).length
-      : 0,
+    tags: Array.isArray(tagsRes.data) ? (tagsRes.data as unknown[]).length : 0,
   };
   return stats;
 }
@@ -78,9 +76,12 @@ export async function queryRecentAnnouncements(params: {
   pageNumber: number;
   pageSize: number;
 }): Promise<PageResponse<Announcement>> {
-  const res = await axios.get<PageResponse<Announcement>>('/announcements/admin/list', {
-    params,
-  });
+  const res = await axios.get<PageResponse<Announcement>>(
+    '/announcements/admin/list',
+    {
+      params,
+    },
+  );
   return res.data;
 }
 

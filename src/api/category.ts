@@ -40,12 +40,19 @@ export async function getCategoryDetail(id: number): Promise<Category> {
   return res.data;
 }
 
-export async function createCategory(data: CategoryCreateRequest): Promise<Category> {
-  const res = await axios.post<Category>('/categories/add', null, { params: data });
+export async function createCategory(
+  data: CategoryCreateRequest,
+): Promise<Category> {
+  const res = await axios.post<Category>('/categories/add', null, {
+    params: data,
+  });
   return res.data;
 }
 
-export async function updateCategory(id: number, data: CategoryUpdateRequest): Promise<Category> {
+export async function updateCategory(
+  id: number,
+  data: CategoryUpdateRequest,
+): Promise<Category> {
   const res = await axios.put<Category>(`/categories/update/${id}`, null, {
     params: data,
   });

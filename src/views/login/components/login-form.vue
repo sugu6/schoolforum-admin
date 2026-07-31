@@ -99,7 +99,8 @@
         await userStore.login(values as LoginData);
 
         // 防御性检查：确保登录成功后才跳转
-        const { redirect, ...othersQuery } = router.currentRoute.value.query || {};
+        const { redirect, ...othersQuery } =
+          router.currentRoute.value.query || {};
         router.push({
           name: (redirect as string) || 'Workplace',
           query: {
@@ -115,7 +116,8 @@
         userInfo.password = '';
       } catch (err) {
         console.error('Login failed:', err);
-        errorMessage.value = (err as Error).message || '登录失败，请检查用户名和密码';
+        errorMessage.value =
+          (err as Error).message || '登录失败，请检查用户名和密码';
       } finally {
         setLoading(false);
       }

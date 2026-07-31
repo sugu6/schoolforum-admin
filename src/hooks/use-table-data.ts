@@ -3,7 +3,10 @@ import type { Ref } from 'vue';
 import type { PageResponse } from '@/types/api';
 
 interface UseTableDataOptions<T> {
-  fetchFn: (params: { pageNumber: number; pageSize: number }) => Promise<PageResponse<T>>;
+  fetchFn: (params: {
+    pageNumber: number;
+    pageSize: number;
+  }) => Promise<PageResponse<T>>;
   pageSize?: number;
   immediate?: boolean;
 }

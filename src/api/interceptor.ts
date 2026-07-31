@@ -1,5 +1,9 @@
 import axios from 'axios';
-import type { AxiosResponse, InternalAxiosRequestConfig, AxiosError } from 'axios';
+import type {
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+  AxiosError,
+} from 'axios';
 import { Message, Modal } from '@arco-design/web-vue';
 import { getToken, getRefreshToken, clearToken } from '@/utils/auth';
 import eventBus from '@/utils/event-bus';
@@ -38,7 +42,9 @@ axios.interceptors.request.use(
     // 添加 CSRF Token（对非 GET 请求，排除登录和刷新 token 接口）
     if (
       config.method &&
-      ['post', 'put', 'delete', 'patch'].includes(config.method.toLowerCase()) &&
+      ['post', 'put', 'delete', 'patch'].includes(
+        config.method.toLowerCase(),
+      ) &&
       !config.url?.includes('/users/login') &&
       !config.url?.includes('/users/refresh-token')
     ) {
@@ -56,7 +62,10 @@ axios.interceptors.request.use(
       '/posts/essential',
     ];
 
-    if (config.method === 'get' && noCachePatterns.some(pattern => config.url?.includes(pattern))) {
+    if (
+      config.method === 'get' &&
+      noCachePatterns.some((pattern) => config.url?.includes(pattern))
+    ) {
       config.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
       config.headers.Pragma = 'no-cache';
     } else if (config.method === 'get') {
@@ -71,7 +80,7 @@ axios.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Token 刷新处理
@@ -81,10 +90,7 @@ let failedQueue: Array<{
   reject: (reason?: any) => void;
 }> = [];
 
-const processQueue = (
-  error: Error | null,
-  token: string | null = null
-) => {
+const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -102,13 +108,18 @@ axios.interceptors.response.use(
     const res = response.data;
 
     // 调试：打印登录响应（仅开发环境）
-    if (import.meta.env.MODE !== 'production' && response.config.url?.includes('/users/login')) {
+    if (
+      import.meta.env.MODE !== 'production' &&
+      response.config.url?.includes('/users/login')
+    ) {
       console.log('[Interceptor] Login response:', {
         url: response.config.url,
         status: response.status,
         dataKeys: Object.keys(res || {}),
         hasUser: !!res?.user,
-        userPreview: res?.user ? { id: res.user.id, username: res.user.username } : null
+        userPreview: res?.user
+          ? { id: res.user.id, username: res.user.username }
+          : null,
       });
     }
 
@@ -142,7 +153,8 @@ axios.interceptors.response.use(
             .then(({ data }) => {
               // 解包响应：后端包装了两层 { code, msg, data: { token, refreshToken } }
               const responseData = data.data || data;
-              const { token: newToken, refreshToken: newRefreshToken } = responseData;
+              const { token: newToken, refreshToken: newRefreshToken } =
+                responseData;
 
               if (newToken) {
                 // 保存新 token
@@ -216,7 +228,7 @@ axios.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // 处理认证失败

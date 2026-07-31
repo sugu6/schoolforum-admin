@@ -1,5 +1,13 @@
 <script lang="ts">
-  import { defineComponent, ref, h, compile, computed, resolveComponent, Component } from 'vue';
+  import {
+    defineComponent,
+    ref,
+    h,
+    compile,
+    computed,
+    resolveComponent,
+    Component,
+  } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter, RouteRecordRaw } from 'vue-router';
   import type { RouteMeta } from 'vue-router';
@@ -157,21 +165,21 @@
         h(
           Menu,
           {
-            mode: topMenu.value ? 'horizontal' : 'vertical',
-            collapsed: collapsed.value,
+            'mode': topMenu.value ? 'horizontal' : 'vertical',
+            'collapsed': collapsed.value,
             'onUpdate:collapsed': (val: boolean) => {
               collapsed.value = val;
             },
-            openKeys: openKeys.value,
+            'openKeys': openKeys.value,
             'onUpdate:openKeys': (val: string[]) => {
               openKeys.value = val;
             },
-            showCollapseButton: appStore.device !== 'mobile',
-            selectedKeys: selectedKey.value,
-            autoOpenSelected: true,
-            levelIndent: 34,
-            style: 'height: 100%;width:100%;',
-            onCollapse: setCollapse,
+            'showCollapseButton': appStore.device !== 'mobile',
+            'selectedKeys': selectedKey.value,
+            'autoOpenSelected': true,
+            'levelIndent': 34,
+            'style': 'height: 100%;width:100%;',
+            'onCollapse': setCollapse,
           },
           () => renderSubMenu(),
         );
@@ -185,6 +193,7 @@
       display: flex;
       align-items: center;
     }
+
     .arco-icon {
       &:not(.arco-icon-down) {
         font-size: 18px;

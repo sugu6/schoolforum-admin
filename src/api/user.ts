@@ -67,8 +67,12 @@ export function getMenuList() {
   return axios.post<RouteRecordNormalized[]>('/api/user/menu');
 }
 
-export async function getUserList(params: UserListParams): Promise<PageResponse<User>> {
-  const res = await axios.get<PageResponse<User>>('/users/list/page', { params });
+export async function getUserList(
+  params: UserListParams,
+): Promise<PageResponse<User>> {
+  const res = await axios.get<PageResponse<User>>('/users/list/page', {
+    params,
+  });
   return res.data;
 }
 
@@ -98,5 +102,8 @@ export interface RefreshTokenData {
 }
 
 export function refreshToken(data: RefreshTokenData) {
-  return axios.post<{ token: string; refreshToken?: string }>('/users/refresh-token', data);
+  return axios.post<{ token: string; refreshToken?: string }>(
+    '/users/refresh-token',
+    data,
+  );
 }

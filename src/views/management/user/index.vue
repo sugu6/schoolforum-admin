@@ -176,24 +176,18 @@
   });
 
   // 使用可复用的表格数据 composable
-  const {
-    tableData,
-    loading,
-    pagination,
-    fetchData,
-    onPageChange,
-    refresh,
-  } = useTableData<User>({
-    fetchFn: async () => {
-      const res = await getUserList({
-        pageNumber: pagination.current,
-        pageSize: pagination.pageSize,
-      });
-      return res;
-    },
-    pageSize: 10,
-    immediate: false, // 手动控制加载时机
-  });
+  const { tableData, loading, pagination, fetchData, onPageChange, refresh } =
+    useTableData<User>({
+      fetchFn: async () => {
+        const res = await getUserList({
+          pageNumber: pagination.current,
+          pageSize: pagination.pageSize,
+        });
+        return res;
+      },
+      pageSize: 10,
+      immediate: false, // 手动控制加载时机
+    });
 
   const columns: TableColumnData[] = [
     { title: '头像', slotName: 'avatarUrl', width: 80 },
@@ -263,6 +257,7 @@
   .container {
     padding: 16px;
   }
+
   .general-card {
     min-height: 100%;
   }

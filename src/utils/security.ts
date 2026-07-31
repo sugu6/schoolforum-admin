@@ -8,7 +8,9 @@
 export const generateCsrfToken = (): string => {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
-  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+    '',
+  );
 };
 
 /**
@@ -17,7 +19,9 @@ export const generateCsrfToken = (): string => {
 export const generateSecureRandom = (length: number = 32): string => {
   const array = new Uint8Array(length);
   crypto.getRandomValues(array);
-  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+    '',
+  );
 };
 
 /**
@@ -35,7 +39,7 @@ export const setSecureCookie = (
   name: string,
   value: string,
   days: number = 7,
-  secure: boolean = true
+  secure: boolean = true,
 ): void => {
   const secureFlag = secure && isSecureContext() ? 'Secure;' : '';
   const expires = new Date();
@@ -56,7 +60,7 @@ export const setSecureCookie = (
  */
 export const safeJsonParse = <T = any>(
   jsonString: string,
-  defaultValue: T
+  defaultValue: T,
 ): T => {
   try {
     const parsed = JSON.parse(jsonString);
@@ -89,7 +93,7 @@ export const isValidUrl = (url: string, allowedDomains?: string[]): boolean => {
 
     // 检查是否在允许的域名列表中
     if (allowedDomains && allowedDomains.length > 0) {
-      return allowedDomains.some(domain => parsed.hostname === domain);
+      return allowedDomains.some((domain) => parsed.hostname === domain);
     }
 
     return false;
@@ -119,7 +123,9 @@ export const checkSecuritySupport = (): {
   serviceWorker: boolean;
 } => {
   return {
-    crypto: typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function',
+    crypto:
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function',
     secureContext: window.isSecureContext || false,
     serviceWorker: 'serviceWorker' in navigator,
   };
