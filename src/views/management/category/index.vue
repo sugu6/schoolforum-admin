@@ -184,7 +184,7 @@
     loading.value = true;
     try {
       const res = await getCategoryTree();
-      treeData.value = res.data || [];
+      treeData.value = res || [];
       pagination.total = treeData.value.length;
     } catch (error) {
       Message.error('获取分类列表失败');

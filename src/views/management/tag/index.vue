@@ -188,7 +188,7 @@
     loading.value = true;
     try {
       const res = await getTagList();
-      allTags.value = res.data || [];
+      allTags.value = res || [];
       applyFilter();
     } catch (error) {
       Message.error('获取标签列表失败');
@@ -220,7 +220,7 @@
   const fetchCategoryList = async () => {
     try {
       const res = await getCategoryTree();
-      categoryTree.value = res.data || [];
+      categoryTree.value = res || [];
     } catch (error) {
       //
     }

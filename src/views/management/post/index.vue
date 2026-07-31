@@ -220,7 +220,7 @@
   import { MarkdownRenderer } from '@/components';
   import dayjs from 'dayjs';
   import { formatDate } from '@/utils/format';
-  import { useTableManagement } from '@/hooks/use-table-management';
+  import { useTableData as useTableManagement } from '@/hooks/use-table-data';
 
   const detailVisible = ref(false);
   const detailLoading = ref(false);
@@ -264,14 +264,9 @@
       });
 
       // 客户端排序
-      tableData.value = (res.data.records || []).sort((a, b) => a.id - b.id);
+      tableData.value = (res.records || []).sort((a, b) => a.id - b.id);
       return res;
     },
-    filters: computed(() => ({
-      categoryId: filterCategoryId.value,
-      isPinned: filterStatus.value === 'PINNED' ? true : filterStatus.value === 'NORMAL' ? false : undefined,
-      isEssential: filterStatus.value === 'ESSENTIAL' ? true : filterStatus.value === 'NORMAL' ? false : undefined,
-    })),
     pageSize: 10,
     immediate: false,
   });
@@ -326,7 +321,7 @@
   const fetchCategories = async () => {
     try {
       const res = await getCategoryTree();
-      categoryTree.value = res.data || [];
+      categoryTree.value = res || [];
     } catch {
       categoryTree.value = [];
     }
@@ -341,7 +336,7 @@
     detailVisible.value = true;
     try {
       const res = await getPostDetail(post.id);
-      currentPost.value = res.data;
+      currentPost.value = res;
     } catch {
       Message.error('获取详情失败');
       detailVisible.value = false;

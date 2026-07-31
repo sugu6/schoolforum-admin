@@ -212,7 +212,7 @@
   const viewUser = async (user: User) => {
     try {
       const res = await getUserInfoById(user.id);
-      currentUser.value = res.data;
+      currentUser.value = res;
       detailVisible.value = true;
     } catch (error) {
       Message.error('获取用户详情失败');

@@ -18,14 +18,52 @@ export default mergeConfig(
         'X-XSS-Protection': '1; mode=block',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
       },
-      // proxy 配置暂时禁用以排查问题
-      // proxy: {
-      //   '/users': {
-      //     target: 'http://localhost:8085',
-      //     changeOrigin: true,
-      //     withCredentials: true,
-      //   },
-      // },
+      proxy: {
+        '/users': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/posts': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/comments': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/tags': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/categories': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/announcements': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/dashboard': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/upload': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/avatars': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/account-deletion': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+        '/search': {
+          target: 'http://localhost:8085',
+          changeOrigin: true,
+        },
+      },
     },
   },
   baseConfig

@@ -34,8 +34,15 @@ export interface DashboardStats {
   tags: number;
 }
 
-export function queryDashboardStats() {
-  return Promise.all([
+export async function queryDashboardStats(): Promise<DashboardStats> {
+  const [
+    usersRes,
+    postsRes,
+    commentsRes,
+    announcementsRes,
+    categoriesRes,
+    tagsRes,
+  ] = await Promise.all([
     axios.get<PageResponse<unknown>>('/users/list/page', {
       params: { pageNumber: 1, pageSize: 1 },
     }),
@@ -50,55 +57,49 @@ export function queryDashboardStats() {
     }),
     axios.get<unknown[]>('/categories/list/page'),
     axios.get<unknown[]>('/tags/list'),
-  ]).then(
-    ([
-      usersRes,
-      postsRes,
-      commentsRes,
-      announcementsRes,
-      categoriesRes,
-      tagsRes,
-    ]) => {
-      const stats: DashboardStats = {
-        users: (usersRes as any).data?.totalRow ?? 0,
-        posts: (postsRes as any).data?.totalRow ?? 0,
-        comments: (commentsRes as any).data?.totalRow ?? 0,
-        announcements: (announcementsRes as any).data?.totalRow ?? 0,
-        categories: Array.isArray((categoriesRes as any).data)
-          ? (categoriesRes as any).data.length
-          : 0,
-        tags: Array.isArray((tagsRes as any).data)
-          ? (tagsRes as any).data.length
-          : 0,
-      };
-      return stats;
-    },
-  );
+  ]);
+
+  const stats: DashboardStats = {
+    users: (usersRes.data as any)?.totalRow ?? 0,
+    posts: (postsRes.data as any)?.totalRow ?? 0,
+    comments: (commentsRes.data as any)?.totalRow ?? 0,
+    announcements: (announcementsRes.data as any)?.totalRow ?? 0,
+    categories: Array.isArray(categoriesRes.data)
+      ? (categoriesRes.data as unknown[]).length
+      : 0,
+    tags: Array.isArray(tagsRes.data)
+      ? (tagsRes.data as unknown[]).length
+      : 0,
+  };
+  return stats;
 }
 
-export function queryRecentAnnouncements(params: {
+export async function queryRecentAnnouncements(params: {
   pageNumber: number;
   pageSize: number;
-}) {
-  return axios.get<PageResponse<Announcement>>('/announcements/admin/list', {
+}): Promise<PageResponse<Announcement>> {
+  const res = await axios.get<PageResponse<Announcement>>('/announcements/admin/list', {
     params,
   });
+  return res.data;
 }
 
-export function queryRecentPosts(params: {
+export async function queryRecentPosts(params: {
   pageNumber: number;
   pageSize: number;
-}) {
-  return axios.get<PageResponse<Post>>('/posts/list/page', {
+}): Promise<PageResponse<Post>> {
+  const res = await axios.get<PageResponse<Post>>('/posts/list/page', {
     params,
   });
+  return res.data;
 }
 
-export function queryRecentComments(params: {
+export async function queryRecentComments(params: {
   pageNumber: number;
   pageSize: number;
-}) {
-  return axios.get<PageResponse<Comment>>('/comments/list/page', {
+}): Promise<PageResponse<Comment>> {
+  const res = await axios.get<PageResponse<Comment>>('/comments/list/page', {
     params,
   });
+  return res.data;
 }

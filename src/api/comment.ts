@@ -41,18 +41,21 @@ export interface CommentListParams {
   pageSize: number;
 }
 
-export function getCommentList(params: CommentListParams) {
-  return axios.get<PageResponse<Comment>>('/comments/list/page', { params });
+export async function getCommentList(params: CommentListParams): Promise<PageResponse<Comment>> {
+  const res = await axios.get<PageResponse<Comment>>('/comments/list/page', { params });
+  return res.data;
 }
 
-export function getCommentDetail(id: number) {
-  return axios.get<Comment>(`/comments/get/${id}`);
+export async function getCommentDetail(id: number): Promise<Comment> {
+  const res = await axios.get<Comment>(`/comments/get/${id}`);
+  return res.data;
 }
 
-export function updateComment(id: number, content: string) {
-  return axios.put<Comment>(`/comments/update/${id}`, null, {
+export async function updateComment(id: number, content: string): Promise<Comment> {
+  const res = await axios.put<Comment>(`/comments/update/${id}`, null, {
     params: { content },
   });
+  return res.data;
 }
 
 export function deleteComment(id: number) {

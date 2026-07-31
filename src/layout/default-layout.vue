@@ -11,10 +11,10 @@
           class="layout-sider"
           breakpoint="xl"
           :collapsed="collapsed"
-          :collapsible="true"
+          :collapsible="false"
           :width="menuWidth"
+          :collapsed-width="48"
           :style="{ paddingTop: navbar ? '60px' : '' }"
-          :hide-trigger="true"
           @collapse="setCollapsed"
         >
           <div class="menu-wrapper">

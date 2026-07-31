@@ -32,12 +32,14 @@ export interface PostListParams {
   isEssential?: boolean;
 }
 
-export function getPostList(params: PostListParams) {
-  return axios.get<PageResponse<Post>>('/posts/list/page', { params });
+export async function getPostList(params: PostListParams): Promise<PageResponse<Post>> {
+  const res = await axios.get<PageResponse<Post>>('/posts/list/page', { params });
+  return res.data;
 }
 
-export function getPostDetail(id: number) {
-  return axios.get<Post>(`/posts/get/${id}`);
+export async function getPostDetail(id: number): Promise<Post> {
+  const res = await axios.get<Post>(`/posts/get/${id}`);
+  return res.data;
 }
 
 export function deletePost(id: number) {

@@ -25,26 +25,31 @@ export interface CategoryUpdateRequest {
   status?: CategoryStatus;
 }
 
-export function getCategoryList() {
-  return axios.get<Category[]>('/categories/list/page');
+export async function getCategoryList(): Promise<Category[]> {
+  const res = await axios.get<Category[]>('/categories/list/page');
+  return res.data;
 }
 
-export function getCategoryTree() {
-  return axios.get<Category[]>('/categories/list');
+export async function getCategoryTree(): Promise<Category[]> {
+  const res = await axios.get<Category[]>('/categories/list');
+  return res.data;
 }
 
-export function getCategoryDetail(id: number) {
-  return axios.get<Category>(`/categories/get/${id}`);
+export async function getCategoryDetail(id: number): Promise<Category> {
+  const res = await axios.get<Category>(`/categories/get/${id}`);
+  return res.data;
 }
 
-export function createCategory(data: CategoryCreateRequest) {
-  return axios.post<Category>('/categories/add', null, { params: data });
+export async function createCategory(data: CategoryCreateRequest): Promise<Category> {
+  const res = await axios.post<Category>('/categories/add', null, { params: data });
+  return res.data;
 }
 
-export function updateCategory(id: number, data: CategoryUpdateRequest) {
-  return axios.put<Category>(`/categories/update/${id}`, null, {
+export async function updateCategory(id: number, data: CategoryUpdateRequest): Promise<Category> {
+  const res = await axios.put<Category>(`/categories/update/${id}`, null, {
     params: data,
   });
+  return res.data;
 }
 
 export function deleteCategory(id: number) {

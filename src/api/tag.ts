@@ -24,30 +24,36 @@ export interface TagUpdateRequest {
   status?: TagStatus;
 }
 
-export function getTagList() {
-  return axios.get<Tag[]>('/tags/list');
+export async function getTagList(): Promise<Tag[]> {
+  const res = await axios.get<Tag[]>('/tags/list');
+  return res.data;
 }
 
-export function getTagDetail(id: number) {
-  return axios.get<Tag>(`/tags/get/${id}`);
+export async function getTagDetail(id: number): Promise<Tag> {
+  const res = await axios.get<Tag>(`/tags/get/${id}`);
+  return res.data;
 }
 
-export function createTag(data: TagCreateRequest) {
-  return axios.post<Tag>('/tags/add', data);
+export async function createTag(data: TagCreateRequest): Promise<Tag> {
+  const res = await axios.post<Tag>('/tags/add', data);
+  return res.data;
 }
 
-export function updateTag(id: number, data: TagUpdateRequest) {
-  return axios.put<Tag>(`/tags/update/${id}`, null, { params: data });
+export async function updateTag(id: number, data: TagUpdateRequest): Promise<Tag> {
+  const res = await axios.put<Tag>(`/tags/update/${id}`, null, { params: data });
+  return res.data;
 }
 
 export function deleteTag(id: number) {
   return axios.delete(`/tags/delete/${id}`);
 }
 
-export function getTagsByCategory(categoryId: number) {
-  return axios.get<Tag[]>(`/tags/list/category/${categoryId}`);
+export async function getTagsByCategory(categoryId: number): Promise<Tag[]> {
+  const res = await axios.get<Tag[]>(`/tags/list/category/${categoryId}`);
+  return res.data;
 }
 
-export function getEnabledTagList() {
-  return axios.get<Tag[]>('/tags/list/enabled');
+export async function getEnabledTagList(): Promise<Tag[]> {
+  const res = await axios.get<Tag[]>('/tags/list/enabled');
+  return res.data;
 }

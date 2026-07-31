@@ -185,8 +185,8 @@
         pageNumber: pagination.current,
         pageSize: pagination.pageSize,
       });
-      tableData.value = res.data.records || [];
-      pagination.total = res.data.totalRow || 0;
+      tableData.value = res.records || [];
+      pagination.total = res.totalRow || 0;
     } catch (error) {
       Message.error('获取公告列表失败');
     } finally {

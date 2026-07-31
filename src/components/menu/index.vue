@@ -1,8 +1,9 @@
-<script lang="tsx">
-  import { defineComponent, ref, h, compile, computed } from 'vue';
+<script lang="ts">
+  import { defineComponent, ref, h, compile, computed, resolveComponent, Component } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter, RouteRecordRaw } from 'vue-router';
   import type { RouteMeta } from 'vue-router';
+  import { Menu, MenuItem, SubMenu } from '@arco-design/web-vue';
   import { useAppStore } from '@/store';
   import { listenerRouteChange } from '@/utils/route-listener';
   import { openWindow, regexUrl } from '@/utils';
@@ -16,6 +17,13 @@
       const router = useRouter();
       const route = useRoute();
       const { menuTree } = useMenuTree();
+
+      // 在 setup 顶层预解析 Arco 图标组件(resolveComponent 必须在 setup 同步阶段调用)
+      const ICON_MAP: Record<string, Component> = {
+        'icon-dashboard': resolveComponent('icon-dashboard'),
+        'icon-settings': resolveComponent('icon-settings'),
+      };
+
       const collapsed = computed({
         get() {
           if (appStore.device === 'desktop') return appStore.menuCollapse;
@@ -108,30 +116,35 @@
         function travel(_route: RouteRecordRaw[], nodes = []) {
           if (_route) {
             _route.forEach((element) => {
-              // This is demo, modify nodes as needed
-              const icon = element?.meta?.icon
-                ? () => h(compile(`<${element?.meta?.icon}/>`))
+              const iconComp = element?.meta?.icon
+                ? ICON_MAP[element.meta.icon]
                 : null;
-              const node =
-                element?.children && element?.children.length !== 0 ? (
-                  <a-sub-menu
-                    key={element?.name}
-                    v-slots={{
+              const icon = iconComp ? () => h(iconComp) : null;
+              const localeTitle = t(element?.meta?.locale || '');
+              const hasChildren =
+                element?.children && element?.children.length !== 0;
+
+              const node = hasChildren
+                ? h(
+                    SubMenu,
+                    { key: element?.name },
+                    {
                       icon,
-                      title: () => h(compile(t(element?.meta?.locale || ''))),
-                    }}
-                  >
-                    {travel(element?.children)}
-                  </a-sub-menu>
-                ) : (
-                  <a-menu-item
-                    key={element?.name}
-                    v-slots={{ icon }}
-                    onClick={() => goto(element)}
-                  >
-                    {t(element?.meta?.locale || '')}
-                  </a-menu-item>
-                );
+                      title: () => h(compile(localeTitle)),
+                      default: () => travel(element?.children),
+                    },
+                  )
+                : h(
+                    MenuItem,
+                    {
+                      key: element?.name,
+                      onClick: () => goto(element),
+                    },
+                    {
+                      icon,
+                      default: () => localeTitle,
+                    },
+                  );
               nodes.push(node as never);
             });
           }
@@ -140,21 +153,28 @@
         return travel(menuTree.value);
       };
 
-      return () => (
-        <a-menu
-          mode={topMenu.value ? 'horizontal' : 'vertical'}
-          v-model:collapsed={collapsed.value}
-          v-model:open-keys={openKeys.value}
-          show-collapse-button={appStore.device !== 'mobile'}
-          selected-keys={selectedKey.value}
-          auto-open-selected={true}
-          level-indent={34}
-          style="height: 100%;width:100%;"
-          onCollapse={setCollapse}
-        >
-          {renderSubMenu()}
-        </a-menu>
-      );
+      return () =>
+        h(
+          Menu,
+          {
+            mode: topMenu.value ? 'horizontal' : 'vertical',
+            collapsed: collapsed.value,
+            'onUpdate:collapsed': (val: boolean) => {
+              collapsed.value = val;
+            },
+            openKeys: openKeys.value,
+            'onUpdate:openKeys': (val: string[]) => {
+              openKeys.value = val;
+            },
+            showCollapseButton: appStore.device !== 'mobile',
+            selectedKeys: selectedKey.value,
+            autoOpenSelected: true,
+            levelIndent: 34,
+            style: 'height: 100%;width:100%;',
+            onCollapse: setCollapse,
+          },
+          () => renderSubMenu(),
+        );
     },
   });
 </script>

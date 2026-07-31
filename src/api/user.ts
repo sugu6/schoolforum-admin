@@ -67,12 +67,14 @@ export function getMenuList() {
   return axios.post<RouteRecordNormalized[]>('/api/user/menu');
 }
 
-export function getUserList(params: UserListParams) {
-  return axios.get<PageResponse<User>>('/users/list/page', { params });
+export async function getUserList(params: UserListParams): Promise<PageResponse<User>> {
+  const res = await axios.get<PageResponse<User>>('/users/list/page', { params });
+  return res.data;
 }
 
-export function getUserInfoById(id: number) {
-  return axios.get<User>(`/users/getInfo/${id}`);
+export async function getUserInfoById(id: number): Promise<User> {
+  const res = await axios.get<User>(`/users/getInfo/${id}`);
+  return res.data;
 }
 
 export function deleteUser(id: number) {

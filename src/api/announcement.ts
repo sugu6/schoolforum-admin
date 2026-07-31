@@ -38,37 +38,43 @@ export interface AnnouncementListParams {
   pageSize: number;
 }
 
-export function getAnnouncementList(params: AnnouncementListParams) {
-  return axios.get<PageResponse<Announcement>>('/announcements/admin/list', {
+export async function getAnnouncementList(params: AnnouncementListParams): Promise<PageResponse<Announcement>> {
+  const res = await axios.get<PageResponse<Announcement>>('/announcements/admin/list', {
     params,
   });
+  return res.data;
 }
 
-export function createAnnouncement(data: AnnouncementCreateRequest) {
-  return axios.post<Announcement>('/announcements', data);
+export async function createAnnouncement(data: AnnouncementCreateRequest): Promise<Announcement> {
+  const res = await axios.post<Announcement>('/announcements', data);
+  return res.data;
 }
 
-export function updateAnnouncement(
+export async function updateAnnouncement(
   id: number,
   data: AnnouncementUpdateRequest,
-) {
-  return axios.put<Announcement>(`/announcements/${id}`, data);
+): Promise<Announcement> {
+  const res = await axios.put<Announcement>(`/announcements/${id}`, data);
+  return res.data;
 }
 
 export function deleteAnnouncement(id: number) {
   return axios.delete(`/announcements/${id}`);
 }
 
-export function getAnnouncementDetail(id: number) {
-  return axios.get<Announcement>(`/announcements/${id}`);
+export async function getAnnouncementDetail(id: number): Promise<Announcement> {
+  const res = await axios.get<Announcement>(`/announcements/${id}`);
+  return res.data;
 }
 
-export function publishAnnouncement(id: number) {
-  return axios.put<Announcement>(`/announcements/${id}/publish`);
+export async function publishAnnouncement(id: number): Promise<Announcement> {
+  const res = await axios.put<Announcement>(`/announcements/${id}/publish`);
+  return res.data;
 }
 
-export function offlineAnnouncement(id: number) {
-  return axios.put<Announcement>(`/announcements/${id}/offline`);
+export async function offlineAnnouncement(id: number): Promise<Announcement> {
+  const res = await axios.put<Announcement>(`/announcements/${id}/offline`);
+  return res.data;
 }
 
 export function toggleAnnouncementTop(id: number) {

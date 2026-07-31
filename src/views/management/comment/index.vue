@@ -158,8 +158,6 @@
         pageNumber: pagination.current,
         pageSize: pagination.pageSize,
       });
-      // 客户端排序
-      tableData.value = (res.data.records || []).sort((a, b) => a.id - b.id);
       return res;
     },
     pageSize: 10,
@@ -212,7 +210,7 @@
     detailVisible.value = true;
     try {
       const res = await getCommentDetail(comment.id);
-      currentComment.value = res.data;
+      currentComment.value = res;
     } catch {
       Message.error('获取评论详情失败');
       detailVisible.value = false;
