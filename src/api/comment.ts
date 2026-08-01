@@ -32,6 +32,11 @@ export interface Comment {
   isDeleted: number;
   parent?: Comment;
   post?: CommentPost;
+  user?: {
+    id: number;
+    username: string;
+    avatarUrl?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }

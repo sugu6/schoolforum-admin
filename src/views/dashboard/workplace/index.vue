@@ -392,7 +392,7 @@
         pageNumber: 1,
         pageSize: 5,
       })) as any;
-      const records: Announcement[] = res.data?.records || [];
+      const records: Announcement[] = res.records || [];
       recentAnnouncements.value = records.map((item) => ({
         id: item.id,
         title: item.title,
@@ -413,7 +413,7 @@
         pageNumber: 1,
         pageSize: 7,
       })) as any;
-      recentPosts.value = res.data?.records || [];
+      recentPosts.value = res.records || [];
     } catch (e) {
       // 记录错误以便调试
       console.error('Operation failed:', e);
@@ -436,11 +436,11 @@
         pageNumber: 1,
         pageSize: 5,
       })) as any;
-      const records: Comment[] = res.data?.records || [];
+      const records: Comment[] = res.records || [];
       recentComments.value = records.map((item) => ({
         id: item.id,
         content: item.content,
-        authorName: item.post?.authorName || '',
+        authorName: item.user?.username || '',
         postTitle: item.post?.title || '',
         createdAt: item.createdAt,
       }));
@@ -548,75 +548,75 @@
 
 <style lang="less" scoped>
   .workplace {
+    min-height: 100%;
     padding: 16px 20px;
     background-color: var(--color-fill-2);
-    min-height: 100%;
   }
 
   // 欢迎横幅
   .welcome-banner {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
+    justify-content: space-between;
     margin-bottom: 16px;
+    padding: 20px 24px;
+    color: #fff;
     background: linear-gradient(135deg, #165dff 0%, #4096ff 50%, #69b1ff 100%);
     border-radius: 8px;
-    color: #fff;
 
     .welcome-title {
-      margin: 0 0 4px 0 !important;
+      margin: 0 0 4px !important;
       color: #fff;
     }
 
     .welcome-subtitle {
-      color: rgba(255, 255, 255, 0.8);
+      color: rgb(255 255 255 / 80%);
       font-size: 14px;
     }
 
     .welcome-meta {
       display: flex;
-      align-items: center;
       gap: 24px;
+      align-items: center;
 
       .meta-item {
         display: flex;
         flex-direction: column;
-        align-items: center;
         gap: 4px;
+        align-items: center;
 
         .meta-label {
-          color: rgba(255, 255, 255, 0.65);
+          color: rgb(255 255 255 / 65%);
           font-size: 12px;
         }
 
         .meta-value {
-          color: rgba(255, 255, 255, 0.95);
-          font-size: 14px;
+          color: rgb(255 255 255 / 95%);
           font-weight: 500;
+          font-size: 14px;
           line-height: 24px;
         }
 
         .role-tag {
           display: inline-flex;
-          align-items: center;
           gap: 6px;
+          align-items: center;
           padding: 2px 12px;
-          border-radius: 12px;
-          font-size: 13px;
-          font-weight: 500;
-          line-height: 20px;
           color: #fff;
-          background: rgba(255, 255, 255, 0.18);
+          font-weight: 500;
+          font-size: 13px;
+          line-height: 20px;
+          background: rgb(255 255 255 / 18%);
+          border: 1px solid rgb(255 255 255 / 25%);
+          border-radius: 12px;
           backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.25);
+          backdrop-filter: blur(10px);
 
           .role-dot {
+            flex-shrink: 0;
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            flex-shrink: 0;
           }
         }
       }
@@ -631,66 +631,72 @@
   .stat-card {
     margin-bottom: 16px;
     border-radius: 8px;
-    transition: all 0.2s ease;
     cursor: default;
+    transition: all 0.2s ease;
 
     &:hover {
+      box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .stat-card-inner {
       display: flex;
-      align-items: center;
       gap: 12px;
+      align-items: center;
     }
 
     .stat-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
       display: flex;
+      flex-shrink: 0;
       align-items: center;
       justify-content: center;
+      width: 44px;
+      height: 44px;
       font-size: 22px;
-      flex-shrink: 0;
+      border-radius: 10px;
     }
 
     // 各卡片配色
     &--users .stat-icon {
-      background-color: #e8f3ff;
       color: #165dff;
+      background-color: #e8f3ff;
     }
+
     &--posts .stat-icon {
-      background-color: #e8ffea;
       color: #00b42a;
+      background-color: #e8ffea;
     }
+
     &--comments .stat-icon {
-      background-color: #fff3e8;
       color: #ff7d00;
+      background-color: #fff3e8;
     }
+
     &--announcements .stat-icon {
-      background-color: #ffe8f2;
       color: #f5319d;
+      background-color: #ffe8f2;
     }
+
     &--categories .stat-icon {
-      background-color: #f3e8ff;
       color: #722ed1;
+      background-color: #f3e8ff;
     }
+
     &--tags .stat-icon {
-      background-color: #e8f9ff;
       color: #14c9c9;
+      background-color: #e8f9ff;
     }
 
     :deep(.arco-statistic) {
       .arco-statistic-title {
-        font-size: 12px;
-        color: var(--color-text-3);
         margin-bottom: 2px;
+        color: var(--color-text-3);
+        font-size: 12px;
       }
+
       .arco-statistic-value {
-        font-size: 22px;
         font-weight: 600;
+        font-size: 22px;
       }
     }
   }
@@ -711,8 +717,8 @@
   .quick-action-item {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 8px;
+    align-items: center;
     padding: 16px 8px;
     border-radius: 12px;
     cursor: pointer;
@@ -720,12 +726,12 @@
 
     &:hover {
       background-color: var(--color-fill-2);
+      box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
       .quick-action-icon {
+        box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
         transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
 
       .quick-action-label {
@@ -739,22 +745,22 @@
     }
 
     .quick-action-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .quick-action-label {
-      font-size: 13px;
       color: var(--color-text-2);
+      font-size: 13px;
+      line-height: 1.3;
       text-align: center;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      line-height: 1.3;
     }
   }
 
@@ -767,8 +773,8 @@
 
   .announcement-item {
     display: flex;
-    align-items: center;
     gap: 10px;
+    align-items: center;
     padding: 10px 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -784,10 +790,10 @@
   }
 
   .announcement-dot {
+    flex-shrink: 0;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    flex-shrink: 0;
 
     &--info {
       background-color: #1677ff;
@@ -804,27 +810,27 @@
 
   .announcement-title {
     flex: 1;
-    font-size: 14px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     color: var(--color-text-1);
+    font-size: 14px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     transition: color 0.2s ease;
   }
 
   .announcement-time {
-    font-size: 13px;
+    flex-shrink: 0;
     color: var(--color-text-4);
+    font-size: 13px;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
   }
 
   // 大尺寸卡片
   .section-card--large {
     :deep(.arco-card-header-title) {
-      font-size: 16px;
       font-weight: 600;
+      font-size: 16px;
     }
 
     :deep(.arco-card-body) {
@@ -849,8 +855,8 @@
   // 表格
   .view-count {
     color: var(--color-text-3);
-    font-size: 14px;
     font-weight: 500;
+    font-size: 14px;
   }
 
   .comment-count {
@@ -861,21 +867,21 @@
 
   :deep(.arco-table) {
     .arco-table-th {
-      background-color: var(--color-fill-1);
       font-weight: 600;
+      background-color: var(--color-fill-1);
     }
   }
 
   // 响应式
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     .workplace {
       padding: 12px;
     }
 
     .welcome-banner {
       flex-direction: column;
-      align-items: flex-start;
       gap: 12px;
+      align-items: flex-start;
 
       .welcome-meta {
         width: 100%;
