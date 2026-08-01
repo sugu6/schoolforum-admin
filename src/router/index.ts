@@ -9,7 +9,8 @@ import createRouteGuard from './guard';
 NProgress.configure({ showSpinner: false }); // NProgress Configuration
 
 const router = createRouter({
-  history: createWebHistory(),
+  // 使用 Vite 的 base（生产 /admin/，开发 /），保证子路径部署下路由正常
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',

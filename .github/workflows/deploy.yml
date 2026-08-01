@@ -1,0 +1,81 @@
+name: Build & Deploy Admin
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v5
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建项目
+        run: pnpm build
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  deploy:
+    name: Deploy to Server
+    needs: build
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 创建部署目录
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DOCKER_HOST }}
+          username: root
+          password: ${{ secrets.ROOT_PASSWORD }}
+          port: ${{ secrets.DOCKER_PORT || 22 }}
+          script: |
+            mkdir -p /var/www/schoolforum-admin
+
+      - name: 下载构建产物
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: 部署到服务器
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DOCKER_HOST }}
+          username: root
+          password: ${{ secrets.ROOT_PASSWORD }}
+          port: ${{ secrets.DOCKER_PORT || 22 }}
+          source: "dist/*"
+          target: /var/www/schoolforum-admin/
+          strip_components: 1
+
+      - name: 校验并重载 Nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DOCKER_HOST }}
+          username: root
+          password: ${{ secrets.ROOT_PASSWORD }}
+          port: ${{ secrets.DOCKER_PORT || 22 }}
+          script: |
+            nginx -t && nginx -s reload
+            echo "Admin frontend deployed and Nginx reloaded"

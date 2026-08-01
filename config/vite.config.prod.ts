@@ -6,6 +6,8 @@ import configVisualizerPlugin from './plugin/visualizer';
 export default mergeConfig(
   {
     mode: 'production',
+    // 管理端部署在 /admin/ 子路径（与用户端同域），生产构建使用该 base
+    base: '/admin/',
     plugins: [configCompressPlugin('gzip'), configVisualizerPlugin()],
     build: {
       rollupOptions: {
