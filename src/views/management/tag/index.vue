@@ -127,7 +127,6 @@
     type TagStatus,
   } from '@/api/tag';
   import { getCategoryTree, type Category } from '@/api/category';
-  import dayjs from 'dayjs';
   import { formatDate } from '@/utils/format';
 
   const loading = ref(false);
@@ -292,9 +291,11 @@
   .container {
     padding: 16px;
   }
+
   .general-card {
     min-height: 100%;
   }
+
   .text-gray {
     color: var(--color-text-3);
   }

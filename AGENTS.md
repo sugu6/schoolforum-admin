@@ -89,12 +89,13 @@ src/
 │   │   ├── post/           # 帖子管理（搜索 + 置顶/精华切换 + 删除）
 │   │   └── comment/        # 评论管理（查看详情 + 删除）
 │   ├── not-found/          # 404
-│   └── redirect/           # 重定向处理器
-├── locale/                 # i18n 翻译文件
-├── directive/              # v-permission 权限指令
-├── mock/                   # MockJS 数据（user, message-box）
+  │
+  ├── locale/                 # i18n 翻译文件
+  ├── directive/              # v-permission 权限指令
 ├── utils/
 │   ├── auth.ts             # Token 存取：isLogin/getToken/setToken/clearToken（localStorage key='token'）
+│   ├── security.ts         # 安全工具：CSRF、安全 JSON 解析、URL 校验、输入净化
+│   ├── markdown.ts         # Markdown 渲染（marked + DOMPurify 净化）
 │   ├── route-listener.ts   # 路由变更发布订阅（mitt），组件通过 listenerRouteChange() 订阅
 │   ├── env.ts              # import.meta.env.MODE !== 'production' 判断开发环境
 │   └── index.ts            # openWindow, regexUrl

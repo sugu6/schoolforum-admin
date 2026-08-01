@@ -125,7 +125,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, onMounted } from 'vue';
   import { Message } from '@arco-design/web-vue';
   import type { TableColumnData } from '@arco-design/web-vue';
   import {
@@ -135,7 +135,6 @@
     type Comment,
   } from '@/api/comment';
   import { MarkdownRenderer } from '@/components';
-  import dayjs from 'dayjs';
   import { formatDate } from '@/utils/format';
   import { useTableData } from '@/hooks/use-table-data';
 
@@ -151,7 +150,6 @@
     fetchData,
     onPageChange,
     onPageSizeChange,
-    refresh,
   } = useTableData<Comment>({
     fetchFn: async () => {
       const res = await getCommentList({
@@ -219,10 +217,6 @@
     }
   };
 
-  const viewPost = (postId: number) => {
-    window.open(`/management/post?postId=${postId}`, '_blank');
-  };
-
   const handleDelete = async (id: number) => {
     try {
       await deleteComment(id);
@@ -244,9 +238,9 @@
 
 <style lang="less" scoped>
   .container {
+    min-height: 100%;
     padding: 20px;
     background: var(--color-bg-2);
-    min-height: 100%;
   }
 
   .general-card {
@@ -258,8 +252,8 @@
   }
 
   .author-id {
-    font-size: 13px;
     color: rgb(var(--arcoblue-6));
+    font-size: 13px;
   }
 
   .post-link {
@@ -270,19 +264,19 @@
     display: inline-block;
     max-width: 180px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: 13px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .stat-pill {
     display: inline-flex;
-    align-items: center;
     gap: 3px;
+    align-items: center;
     padding: 2px 8px;
-    border-radius: 10px;
     font-size: 12px;
     line-height: 20px;
+    border-radius: 10px;
 
     &.like {
       color: rgb(var(--red-5));
@@ -292,28 +286,28 @@
 
   .parent-comment {
     max-height: 120px;
-    overflow-y: auto;
     padding: 8px 12px;
-    background: var(--color-fill-1);
-    border-radius: 6px;
+    overflow-y: auto;
+    color: var(--color-text-2);
     font-size: 13px;
     line-height: 1.7;
-    color: var(--color-text-2);
+    background: var(--color-fill-1);
+    border-radius: 6px;
 
     .parent-author {
-      font-weight: 500;
-      color: rgb(var(--arcoblue-6));
       margin-right: 4px;
+      color: rgb(var(--arcoblue-6));
+      font-weight: 500;
     }
   }
 
   .comment-content {
     max-height: 300px;
-    overflow-y: auto;
-    line-height: 1.8;
-    font-size: 13px;
-    background: var(--color-fill-1);
     padding: 12px 16px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.8;
+    background: var(--color-fill-1);
     border-radius: 6px;
   }
 </style>

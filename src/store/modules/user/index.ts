@@ -3,7 +3,6 @@ import {
   login as userLogin,
   logout as userLogout,
   getUserInfo,
-  refreshToken as refreshUserToken,
   LoginData,
 } from '@/api/user';
 import { clearToken } from '@/utils/auth';

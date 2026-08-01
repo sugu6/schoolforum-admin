@@ -86,7 +86,7 @@
       setLoading(true);
       const { data } = await queryPopularList({ type: contentType });
       renderList.value = data;
-    } catch (err) {
+    } catch {
       // you can report use errorHandler or other
     } finally {
       setLoading(false);
@@ -102,15 +102,19 @@
   .general-card {
     min-height: 395px;
   }
+
   :deep(.arco-table-tr) {
     height: 44px;
+
     .arco-typography {
       margin-bottom: 0;
     }
   }
+
   .increases-cell {
     display: flex;
     align-items: center;
+
     span {
       margin-right: 4px;
     }

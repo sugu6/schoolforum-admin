@@ -28,8 +28,8 @@
 
       // 在 setup 顶层预解析 Arco 图标组件(resolveComponent 必须在 setup 同步阶段调用)
       const ICON_MAP: Record<string, Component> = {
-        'icon-dashboard': resolveComponent('icon-dashboard'),
-        'icon-settings': resolveComponent('icon-settings'),
+        'icon-dashboard': resolveComponent('icon-dashboard') as Component,
+        'icon-settings': resolveComponent('icon-settings') as Component,
       };
 
       const collapsed = computed({
@@ -139,7 +139,7 @@
                     {
                       icon,
                       title: () => h(compile(localeTitle)),
-                      default: () => travel(element?.children),
+                      default: () => travel(element?.children || []),
                     },
                   )
                 : h(

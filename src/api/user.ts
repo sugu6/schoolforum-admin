@@ -94,16 +94,6 @@ export interface UpdateUserData {
 }
 
 export function updateUser(id: number, data: UpdateUserData) {
-  return axios.put(`/users/update/${id}`, data);
-}
-
-export interface RefreshTokenData {
-  refreshToken: string;
-}
-
-export function refreshToken(data: RefreshTokenData) {
-  return axios.post<{ token: string; refreshToken?: string }>(
-    '/users/refresh-token',
-    data,
-  );
+  // 后端 PUT /users/update 使用 query 参数（含 id），不使用路径变量/JSON body
+  return axios.put('/users/update', null, { params: { id, ...data } });
 }

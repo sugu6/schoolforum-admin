@@ -6,35 +6,41 @@ import configVisualizerPlugin from './plugin/visualizer';
 export default mergeConfig(
   {
     mode: 'production',
-    plugins: [
-      configCompressPlugin('gzip'),
-      configVisualizerPlugin(),
-    ],
+    plugins: [configCompressPlugin('gzip'), configVisualizerPlugin()],
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
+          // rolldown 要求 manualChunks 为函数形式
+          manualChunks(id: string) {
+            if (!id.includes('node_modules')) return undefined;
             // Vue 核心
-            'vue-core': ['vue'],
-            'vue-router': ['vue-router'],
-            'pinia': ['pinia'],
-            'vue-i18n': ['vue-i18n'],
-            '@vueuse/core': ['@vueuse/core'],
-
+            if (
+              id.includes('/vue/') ||
+              id.includes('/vue-router/') ||
+              id.includes('/pinia/') ||
+              id.includes('/vue-i18n/') ||
+              id.includes('/@vueuse/')
+            ) {
+              return 'vue-core';
+            }
             // Arco Design - 基础组件
-            'arco-base': ['@arco-design/web-vue'],
-
+            if (id.includes('/@arco-design/')) return 'arco-base';
             // 图表库
-            'echarts-core': ['echarts/core'],
-            'echarts-charts': ['echarts/charts'],
-            'echarts-components': ['echarts/components'],
-            'vue-echarts': ['vue-echarts'],
-
+            if (id.includes('/echarts/') || id.includes('/vue-echarts/')) {
+              return 'echarts';
+            }
             // 工具库
-            'utils': ['dayjs', 'dompurify', 'marked', 'nprogress'],
-
+            if (
+              id.includes('/dayjs/') ||
+              id.includes('/dompurify/') ||
+              id.includes('/marked/') ||
+              id.includes('/nprogress/')
+            ) {
+              return 'utils';
+            }
             // HTTP
-            'axios': ['axios'],
+            if (id.includes('/axios/')) return 'axios';
+            return undefined;
           },
         },
         chunkSizeWarningLimit: 1500,
@@ -50,18 +56,20 @@ export default mergeConfig(
         // Content Security Policy - 生产环境应该根据实际需求调整
         'Content-Security-Policy': [
           "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+          "script-src 'self' 'unsafe-inline'",
           "style-src 'self' 'unsafe-inline'",
-          "img-src 'self' data: https: http:",
+          "img-src 'self' data: https:",
           "font-src 'self' data:",
           "connect-src 'self' https:",
           "frame-src 'none'",
+          "frame-ancestors 'self'",
           "object-src 'none'",
           "base-uri 'self'",
           "form-action 'self'",
         ].join('; '),
         // HTTP Strict Transport Security (HSTS)
-        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+        'Strict-Transport-Security':
+          'max-age=31536000; includeSubDomains; preload',
         // 额外的安全头
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'DENY',
@@ -71,5 +79,5 @@ export default mergeConfig(
       },
     },
   },
-  baseConfig
+  baseConfig,
 );

@@ -35,7 +35,8 @@ export async function getTagDetail(id: number): Promise<Tag> {
 }
 
 export async function createTag(data: TagCreateRequest): Promise<Tag> {
-  const res = await axios.post<Tag>('/tags/add', data);
+  // 后端 /tags/add 使用 form/query 参数
+  const res = await axios.post<Tag>('/tags/add', null, { params: data });
   return res.data;
 }
 

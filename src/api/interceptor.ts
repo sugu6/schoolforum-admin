@@ -5,9 +5,8 @@ import type {
   AxiosError,
 } from 'axios';
 import { Message, Modal } from '@arco-design/web-vue';
-import { getToken, getRefreshToken, clearToken } from '@/utils/auth';
 import eventBus from '@/utils/event-bus';
-import { generateCsrfToken, reportSecurityError } from '@/utils/security';
+import { reportSecurityError } from '@/utils/security';
 
 export interface HttpResponse<T = unknown> {
   status: number;
@@ -20,86 +19,97 @@ if (import.meta.env.VITE_API_BASE_URL) {
   axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 }
 
-// CSRF Token 管理
-let csrfToken: string | null = null;
+// 认证基于 httpOnly Cookie（后端 Sa-Token），前端不保存/不携带 token
+const REFRESH_URL = '/auth/refresh';
+const AUTH_FAILURE_CODES = [401, 50008, 50012, 50014];
 
-const getCsrfToken = (): string => {
-  if (!csrfToken) {
-    csrfToken = generateCsrfToken();
-  }
-  return csrfToken;
-};
-
-// 请求拦截器
-axios.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    // 添加认证 Token
-    const token = getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // 添加 CSRF Token（对非 GET 请求，排除登录和刷新 token 接口）
-    if (
-      config.method &&
-      ['post', 'put', 'delete', 'patch'].includes(
-        config.method.toLowerCase(),
-      ) &&
-      !config.url?.includes('/users/login') &&
-      !config.url?.includes('/users/refresh-token')
-    ) {
-      const csrfHeaderName = 'X-CSRF-Token';
-      config.headers[csrfHeaderName] = getCsrfToken();
-    }
-
-    // 仅对敏感数据请求禁用缓存（用户信息、统计数据等）
-    // 公开数据（分类、标签等）保留浏览器缓存以提升性能
-    const noCachePatterns = [
-      '/users/info',
-      '/users/list',
-      '/dashboard',
-      '/posts/pinned',
-      '/posts/essential',
-    ];
-
-    if (
-      config.method === 'get' &&
-      noCachePatterns.some((pattern) => config.url?.includes(pattern))
-    ) {
-      config.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
-      config.headers.Pragma = 'no-cache';
-    } else if (config.method === 'get') {
-      // 公开数据使用浏览器缓存
-      config.headers['Cache-Control'] = 'public, max-age=300'; // 5 分钟缓存
-    }
-
-    // 安全头
-    config.headers['X-Content-Type-Options'] = 'nosniff';
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
-
-// Token 刷新处理
+// Token 刷新状态（同一时间只允许一个刷新请求，其余 401 请求排队）
 let isRefreshing = false;
 let failedQueue: Array<{
-  resolve: (value?: any) => void;
+  resolve: (value?: unknown) => void;
   reject: (reason?: any) => void;
 }> = [];
 
-const processQueue = (error: Error | null, token: string | null = null) => {
+const processQueue = (error: Error | null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
-      prom.resolve(token);
+      prom.resolve();
     }
   });
 
   failedQueue = [];
+};
+
+const isRefreshUrl = (url?: string): boolean =>
+  !!url && url.includes('/auth/refresh');
+
+/**
+ * 调用后端刷新接口。access/refresh token 均由 httpOnly Cookie 携带，
+ * 刷新成功后 Cookie 自动更新，无需前端解析或存储。
+ */
+const refreshAccessToken = (): Promise<void> =>
+  axios.post(REFRESH_URL).then(() => undefined);
+
+const retryRequest = (config: InternalAxiosRequestConfig) => {
+  (config as InternalAxiosRequestConfig & { _retry?: boolean })._retry = true;
+  return axios(config);
+};
+
+// 防止"登录已过期"弹窗重复弹出
+let authFailureModalShown = false;
+
+// 处理认证失败
+function handleAuthFailure() {
+  if (authFailureModalShown) return;
+  authFailureModalShown = true;
+  Modal.error({
+    title: '登录已过期',
+    content: '请重新登录',
+    okText: '重新登录',
+    onOk() {
+      authFailureModalShown = false;
+      eventBus.emit('auth:failed', { reason: 'token_expired' });
+    },
+  });
+}
+
+/**
+ * 统一处理 token 失效：刷新后重试原请求；刷新失败则弹窗并登出。
+ * 刷新接口自身失败或请求已重试过一次时，直接进入登出流程，避免死循环。
+ */
+const handleAuthExpired = (
+  config: InternalAxiosRequestConfig,
+): Promise<AxiosResponse> => {
+  const retried = (config as InternalAxiosRequestConfig & { _retry?: boolean })
+    ._retry;
+  if (retried || isRefreshUrl(config.url)) {
+    handleAuthFailure();
+    return Promise.reject(new Error('登录已过期，请重新登录'));
+  }
+
+  if (isRefreshing) {
+    // 已有刷新在途，排队等待刷新完成后重试
+    return new Promise((resolve, reject) => {
+      failedQueue.push({ resolve, reject });
+    }).then(() => retryRequest(config));
+  }
+
+  isRefreshing = true;
+  return refreshAccessToken()
+    .then(() => {
+      processQueue(null);
+      return retryRequest(config);
+    })
+    .catch((error) => {
+      processQueue(error);
+      handleAuthFailure();
+      return Promise.reject(error);
+    })
+    .finally(() => {
+      isRefreshing = false;
+    });
 };
 
 // 响应拦截器
@@ -107,92 +117,13 @@ axios.interceptors.response.use(
   (response: AxiosResponse) => {
     const res = response.data;
 
-    // 调试：打印登录响应（仅开发环境）
-    if (
-      import.meta.env.MODE !== 'production' &&
-      response.config.url?.includes('/users/login')
-    ) {
-      console.log('[Interceptor] Login response:', {
-        url: response.config.url,
-        status: response.status,
-        dataKeys: Object.keys(res || {}),
-        hasUser: !!res?.user,
-        userPreview: res?.user
-          ? { id: res.user.id, username: res.user.username }
-          : null,
-      });
-    }
-
     const successCodes = [200, 0, 20000, undefined];
     if (res.code !== undefined && !successCodes.includes(res.code)) {
       const errorMsg = res.msg || res.message || 'Error';
 
-      // Token 过期，尝试刷新
-      if ([401, 50008, 50012, 50014].includes(res.code)) {
-        if (isRefreshing) {
-          // 如果正在刷新，将请求加入队列
-          return new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
-          })
-            .then((token) => {
-              response.config.headers.Authorization = `Bearer ${token}`;
-              return axios(response.config);
-            })
-            .catch((err) => {
-              return Promise.reject(err);
-            });
-        }
-
-        isRefreshing = true;
-
-        const refreshToken = getRefreshToken();
-
-        if (refreshToken) {
-          return axios
-            .post('/users/refresh-token', { refreshToken })
-            .then(({ data }) => {
-              // 解包响应：后端包装了两层 { code, msg, data: { token, refreshToken } }
-              const responseData = data.data || data;
-              const { token: newToken, refreshToken: newRefreshToken } =
-                responseData;
-
-              if (newToken) {
-                // 保存新 token
-                import('@/utils/auth').then(({ setToken, setRefreshToken }) => {
-                  setToken(newToken);
-                  if (newRefreshToken) {
-                    setRefreshToken(newRefreshToken);
-                  }
-                });
-
-                // 更新请求头
-                response.config.headers.Authorization = `Bearer ${newToken}`;
-
-                // 处理队列中的请求
-                processQueue(null, newToken);
-
-                // 重试原始请求
-                return axios(response.config);
-              }
-
-              processQueue(new Error('Token 刷新失败'), null);
-              handleAuthFailure();
-              return Promise.reject(new Error('Token 刷新失败'));
-            })
-            .catch((error) => {
-              processQueue(error, null);
-              handleAuthFailure();
-              return Promise.reject(error);
-            })
-            .finally(() => {
-              isRefreshing = false;
-            });
-        } else {
-          // 没有 refresh token，直接登出
-          isRefreshing = false;
-          handleAuthFailure();
-          return Promise.reject(new Error(errorMsg));
-        }
+      // 业务码 401：token 过期，尝试刷新
+      if (AUTH_FAILURE_CODES.includes(res.code)) {
+        return handleAuthExpired(response.config);
       }
 
       Message.error({
@@ -204,41 +135,42 @@ axios.interceptors.response.use(
     }
 
     // 解包响应数据：后端 ResponseAdvice 包装了一层 { code, msg, data: T }
-    // 返回实际的业务数据，避免在所有组件中重复解包
     const responseData = res.data || res;
     response.data = responseData;
 
     return response;
   },
   (error: AxiosError) => {
+    const status = error.response?.status;
+    const config = error.config as
+      | (InternalAxiosRequestConfig & { _retry?: boolean })
+      | undefined;
     const msg =
       (error.response?.data as any)?.msg ||
       (error.response?.data as any)?.message ||
       error.message ||
       '请求错误';
 
+    // HTTP 401：token 过期，尝试刷新后重试（刷新接口本身或已重试过的请求除外）
+    if (
+      status === 401 &&
+      config &&
+      !config._retry &&
+      !isRefreshUrl(config.url)
+    ) {
+      return handleAuthExpired(config);
+    }
+
+    // 记录安全错误
+    if (status === 401 || status === 403) {
+      reportSecurityError(new Error(msg), 'auth_error');
+    }
+
     Message.error({
       content: msg,
       duration: 5 * 1000,
     });
 
-    // 记录安全错误
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      reportSecurityError(new Error(msg), 'auth_error');
-    }
-
     return Promise.reject(error);
   },
 );
-
-// 处理认证失败
-function handleAuthFailure() {
-  Modal.error({
-    title: '登录已过期',
-    content: '请重新登录',
-    okText: '重新登录',
-    onOk() {
-      eventBus.emit('auth:failed', { reason: 'token_expired' });
-    },
-  });
-}

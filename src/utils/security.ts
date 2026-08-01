@@ -3,17 +3,6 @@
  */
 
 /**
- * 生成 CSRF Token
- */
-export const generateCsrfToken = (): string => {
-  const array = new Uint8Array(32);
-  crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
-    '',
-  );
-};
-
-/**
  * 安全的随机字符串生成
  */
 export const generateSecureRandom = (length: number = 32): string => {
@@ -65,9 +54,13 @@ export const safeJsonParse = <T = any>(
   try {
     const parsed = JSON.parse(jsonString);
 
-    // 检查原型污染
+    // 检查原型污染：仅当对象自身携带危险键时拒绝
     if (parsed && typeof parsed === 'object') {
-      if (parsed.__proto__ || parsed.constructor || parsed.prototype) {
+      const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+      const hasDangerousKey = dangerousKeys.some((key) =>
+        Object.prototype.hasOwnProperty.call(parsed, key),
+      );
+      if (hasDangerousKey) {
         console.warn('检测到潜在的 JSON 原型污染攻击');
         return defaultValue;
       }

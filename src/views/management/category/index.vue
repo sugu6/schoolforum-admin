@@ -118,7 +118,6 @@
     type Category,
     type CategoryStatus,
   } from '@/api/category';
-  import dayjs from 'dayjs';
   import { formatDate } from '@/utils/format';
 
   const loading = ref(false);
@@ -271,6 +270,7 @@
   .container {
     padding: 16px;
   }
+
   .general-card {
     min-height: 100%;
   }

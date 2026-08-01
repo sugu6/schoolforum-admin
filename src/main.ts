@@ -18,7 +18,7 @@ app.use(store);
 app.use(i18n);
 app.use(directive);
 
-eventBus.on('auth:failed', async ({ reason }) => {
+eventBus.on('auth:failed', async () => {
   const userStore = useUserStore();
 
   try {

@@ -32,7 +32,7 @@ export default function setupUserLoginInfoGuard(router: Router) {
     try {
       await withTimeout(userStore.info(), 5000);
       next();
-    } catch (error) {
+    } catch {
       await userStore.logout();
       next({
         name: 'login',

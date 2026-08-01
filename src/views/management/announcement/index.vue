@@ -141,7 +141,7 @@
     type AnnouncementType,
   } from '@/api/announcement';
   import { MarkdownRenderer } from '@/components';
-  import { formatDate } from '@/utils/format';
+  import dayjs from 'dayjs';
 
   const loading = ref(false);
   const tableData = ref<Announcement[]>([]);
@@ -177,6 +177,11 @@
     { title: '创建时间', slotName: 'createdAt', width: 180 },
     { title: '操作', slotName: 'operations', width: 280 },
   ];
+
+  const formatDate = (date: string | undefined) => {
+    if (!date) return '-';
+    return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
+  };
 
   const fetchData = async () => {
     loading.value = true;
@@ -294,6 +299,7 @@
   .container {
     padding: 16px;
   }
+
   .general-card {
     min-height: 100%;
   }
@@ -301,13 +307,13 @@
   .markdown-preview {
     min-height: 120px;
     max-height: 400px;
-    overflow-y: auto;
     padding: 12px 16px;
-    background: var(--color-fill-1);
-    border-radius: 6px;
-    border: 1px solid var(--color-border-2);
+    overflow-y: auto;
     font-size: 13px;
     line-height: 1.8;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-2);
+    border-radius: 6px;
 
     .preview-empty {
       color: var(--color-text-3);

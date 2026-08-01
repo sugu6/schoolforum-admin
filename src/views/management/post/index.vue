@@ -207,7 +207,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import { Message } from '@arco-design/web-vue';
   import type { TableColumnData, TableData } from '@arco-design/web-vue';
   import {
@@ -220,7 +220,6 @@
   } from '@/api/post';
   import { getCategoryTree, type Category } from '@/api/category';
   import { MarkdownRenderer } from '@/components';
-  import dayjs from 'dayjs';
   import { formatDate } from '@/utils/format';
   import { useTableData as useTableManagement } from '@/hooks/use-table-data';
 

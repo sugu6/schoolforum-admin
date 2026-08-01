@@ -43,7 +43,6 @@
       <a-space :size="16" direction="vertical">
         <div class="login-form-password-actions">
           <a-checkbox
-            checked="rememberPassword"
             :model-value="loginConfig.rememberPassword"
             @change="setRememberPassword as any"
           >

@@ -159,7 +159,6 @@
     type User,
     type UpdateUserData,
   } from '@/api/user';
-  import dayjs from 'dayjs';
   import { formatDate } from '@/utils/format';
   import { useTableData } from '@/hooks/use-table-data';
 
@@ -208,7 +207,7 @@
       const res = await getUserInfoById(user.id);
       currentUser.value = res;
       detailVisible.value = true;
-    } catch (error) {
+    } catch {
       Message.error('获取用户详情失败');
     }
   };
@@ -218,7 +217,7 @@
       await deleteUser(id);
       Message.success('删除成功');
       fetchData();
-    } catch (error) {
+    } catch {
       Message.error('删除失败');
     }
   };
@@ -239,7 +238,7 @@
       Message.success('编辑成功');
       editVisible.value = false;
       fetchData();
-    } catch (error) {
+    } catch {
       Message.error('编辑失败');
     }
   };

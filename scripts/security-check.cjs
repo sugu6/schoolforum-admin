@@ -193,8 +193,11 @@ function checkXssProtection() {
   const rendererContent = readFile(rendererPath);
 
   if (rendererContent && /v-html/i.test(rendererContent)) {
-    if (/eslint-disable-next-line vue\/no-v-html/.test(rendererContent)) {
-      log('⚠ 使用 v-html（已添加 eslint 禁用注释）', 'yellow');
+    // 渲染源在 markdown.ts 已通过 DOMPurify 净化，视为安全
+    if (/DOMPurify\.sanitize/i.test(content)) {
+      log('✓ 使用 v-html（渲染源已通过 DOMPurify 净化）', 'green');
+    } else if (/eslint-disable-next-line vue\/no-v-html/.test(rendererContent)) {
+      log('⚠ 使用 v-html（已添加 eslint 禁用注释，但渲染源未净化）', 'yellow');
     } else {
       log('✗ 使用 v-html（需要添加安全措施）', 'red');
     }

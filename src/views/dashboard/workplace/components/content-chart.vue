@@ -189,7 +189,7 @@
           graphicElements.value[1].style.text = el.x;
         }
       });
-    } catch (err) {
+    } catch {
       // you can report use errorHandler or other
     } finally {
       setLoading(false);

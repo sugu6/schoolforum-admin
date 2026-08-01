@@ -137,7 +137,6 @@
 
 <script lang="ts" setup>
   import { computed, ref, inject } from 'vue';
-  import { Message } from '@arco-design/web-vue';
   import { useDark, useToggle, useFullscreen } from '@vueuse/core';
   import { useAppStore, useUserStore } from '@/store';
   import { LOCALE_OPTIONS } from '@/locale';
@@ -230,9 +229,11 @@
     display: flex;
     padding-right: 20px;
     list-style: none;
+
     :deep(.locale-select) {
       border-radius: 20px;
     }
+
     li {
       display: flex;
       align-items: center;
@@ -243,11 +244,13 @@
       color: var(--color-text-1);
       text-decoration: none;
     }
+
     .nav-btn {
-      border-color: rgb(var(--gray-2));
       color: rgb(var(--gray-8));
       font-size: 16px;
+      border-color: rgb(var(--gray-2));
     }
+
     .trigger-btn {
       position: absolute;
       bottom: 14px;
