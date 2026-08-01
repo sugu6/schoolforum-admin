@@ -3,7 +3,6 @@
     defineComponent,
     ref,
     h,
-    compile,
     computed,
     resolveComponent,
     Component,
@@ -138,7 +137,7 @@
                     { key: element?.name },
                     {
                       icon,
-                      title: () => h(compile(localeTitle)),
+                      title: () => localeTitle,
                       default: () => travel(element?.children || []),
                     },
                   )
