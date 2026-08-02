@@ -4,20 +4,20 @@
     <div class="welcome-banner">
       <div class="welcome-info">
         <a-typography-title :heading="4" class="welcome-title">
-          {{ $t('workplace.welcomeBack')
-          }}{{ userInfo.name ? `，${userInfo.name}` : '' }}
+          {{ $t("workplace.welcomeBack")
+          }}{{ userInfo.name ? `，${userInfo.name}` : "" }}
         </a-typography-title>
         <a-typography-text class="welcome-subtitle">
-          {{ $t('workplace.welcomeDesc') }}
+          {{ $t("workplace.welcomeDesc") }}
         </a-typography-text>
       </div>
       <div class="welcome-meta">
         <div class="meta-item">
-          <span class="meta-label">{{ $t('workplace.todayDate') }}</span>
+          <span class="meta-label">{{ $t("workplace.todayDate") }}</span>
           <span class="meta-value">{{ todayDate }}</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">{{ $t('workplace.userRole') }}</span>
+          <span class="meta-label">{{ $t("workplace.userRole") }}</span>
           <span class="role-tag">
             <span
               class="role-dot"
@@ -173,7 +173,7 @@
               :font-size="14"
               @click="navigateTo('/management/announcement')"
             >
-              {{ $t('workplace.viewAll') }}
+              {{ $t("workplace.viewAll") }}
             </a-link>
           </template>
           <div class="announcement-list">
@@ -205,7 +205,7 @@
         >
           <template #extra>
             <a-link :font-size="14" @click="navigateTo('/management/post')">
-              {{ $t('workplace.viewAll') }}
+              {{ $t("workplace.viewAll") }}
             </a-link>
           </template>
           <a-table
@@ -246,14 +246,14 @@
                       color="red"
                       size="small"
                     >
-                      {{ $t('workplace.pinned') }}
+                      {{ $t("workplace.pinned") }}
                     </a-tag>
                     <a-tag
                       v-if="record.isEssential === 'ESSENTIAL'"
                       color="arcoblue"
                       size="small"
                     >
-                      {{ $t('workplace.essential') }}
+                      {{ $t("workplace.essential") }}
                     </a-tag>
                   </a-space>
                 </template>
@@ -276,7 +276,7 @@
         >
           <template #extra>
             <a-link :font-size="14" @click="navigateTo('/management/comment')">
-              {{ $t('workplace.viewAll') }}
+              {{ $t("workplace.viewAll") }}
             </a-link>
           </template>
           <a-table
@@ -321,575 +321,574 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, onMounted, reactive, ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { useUserStore } from '@/store';
-  import {
-    queryDashboardStats,
-    queryRecentAnnouncements,
-    queryRecentPosts,
-    queryRecentComments,
-  } from '@/api/dashboard';
-  import type { Announcement } from '@/api/announcement';
-  import type { Post } from '@/api/post';
-  import type { Comment } from '@/api/comment';
-  import dayjs from 'dayjs';
+import { computed, onMounted, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/store";
+import {
+  queryDashboardStats,
+  queryRecentAnnouncements,
+  queryRecentPosts,
+  queryRecentComments,
+} from "@/api/dashboard";
+import type { Announcement } from "@/api/announcement";
+import type { Post } from "@/api/post";
+import type { Comment } from "@/api/comment";
+import dayjs from "dayjs";
 
-  const router = useRouter();
-  const userStore = useUserStore();
+const router = useRouter();
+const userStore = useUserStore();
 
-  const userInfo = computed(() => ({
-    name: userStore.name || '',
-    role: userStore.role || '',
-  }));
+const userInfo = computed(() => ({
+  name: userStore.name || "",
+  role: userStore.role || "",
+}));
 
-  const roleLabel = computed(() => {
-    const map: Record<string, string> = {
-      SUPER_ADMIN: '超级管理员',
-      ADMIN: '管理员',
-      USER: '用户',
-    };
-    return map[userInfo.value.role] || '用户';
-  });
+const roleLabel = computed(() => {
+  const map: Record<string, string> = {
+    SUPER_ADMIN: "超级管理员",
+    ADMIN: "管理员",
+    USER: "用户",
+  };
+  return map[userInfo.value.role] || "用户";
+});
 
-  const roleColor = computed(() => {
-    const map: Record<string, string> = {
-      SUPER_ADMIN: '#FACC15',
-      ADMIN: '#C084FC',
-      USER: '#67E8F9',
-    };
-    return map[userInfo.value.role] || '#67E8F9';
-  });
+const roleColor = computed(() => {
+  const map: Record<string, string> = {
+    SUPER_ADMIN: "#FACC15",
+    ADMIN: "#C084FC",
+    USER: "#67E8F9",
+  };
+  return map[userInfo.value.role] || "#67E8F9";
+});
 
-  const todayDate = computed(() => dayjs().format('YYYY-MM-DD'));
+const todayDate = computed(() => dayjs().format("YYYY-MM-DD"));
 
-  const stats = reactive({
-    users: 0,
-    posts: 0,
-    comments: 0,
-    announcements: 0,
-    categories: 0,
-    tags: 0,
-  });
+const stats = reactive({
+  users: 0,
+  posts: 0,
+  comments: 0,
+  announcements: 0,
+  categories: 0,
+  tags: 0,
+});
 
-  async function fetchStats() {
-    try {
-      const data = await queryDashboardStats();
-      Object.assign(stats, data);
-    } catch (e) {
-      // 记录错误以便调试
-      console.error('Failed to fetch dashboard stats:', e);
-    }
+async function fetchStats() {
+  try {
+    const data = await queryDashboardStats();
+    Object.assign(stats, data);
+  } catch (e) {
+    // 记录错误以便调试
+    console.error("Failed to fetch dashboard stats:", e);
   }
+}
 
-  const recentAnnouncements = ref<
-    { id: number; title: string; type: string; time: string }[]
-  >([]);
+const recentAnnouncements = ref<
+  { id: number; title: string; type: string; time: string }[]
+>([]);
 
-  async function fetchRecentAnnouncements() {
-    try {
-      const res = (await queryRecentAnnouncements({
-        pageNumber: 1,
-        pageSize: 5,
-      })) as any;
-      const records: Announcement[] = res.records || [];
-      recentAnnouncements.value = records.map((item) => ({
-        id: item.id,
-        title: item.title,
-        type: item.type,
-        time: item.createdAt,
-      }));
-    } catch (e) {
-      // 记录错误以便调试
-      console.error('Operation failed:', e);
-    }
+async function fetchRecentAnnouncements() {
+  try {
+    const res = (await queryRecentAnnouncements({
+      pageNumber: 1,
+      pageSize: 5,
+    })) as any;
+    const records: Announcement[] = res.records || [];
+    recentAnnouncements.value = records.map((item) => ({
+      id: item.id,
+      title: item.title,
+      type: item.type,
+      time: item.createdAt,
+    }));
+  } catch (e) {
+    // 记录错误以便调试
+    console.error("Operation failed:", e);
   }
+}
 
-  const recentPosts = ref<Post[]>([]);
+const recentPosts = ref<Post[]>([]);
 
-  async function fetchRecentPosts() {
-    try {
-      const res = (await queryRecentPosts({
-        pageNumber: 1,
-        pageSize: 7,
-      })) as any;
-      recentPosts.value = res.records || [];
-    } catch (e) {
-      // 记录错误以便调试
-      console.error('Operation failed:', e);
-    }
+async function fetchRecentPosts() {
+  try {
+    const res = (await queryRecentPosts({
+      pageNumber: 1,
+      pageSize: 7,
+    })) as any;
+    recentPosts.value = res.records || [];
+  } catch (e) {
+    // 记录错误以便调试
+    console.error("Operation failed:", e);
   }
+}
 
-  const recentComments = ref<
-    {
-      id: number;
-      content: string;
-      authorName: string;
-      postTitle: string;
-      createdAt: string;
-    }[]
-  >([]);
+const recentComments = ref<
+  {
+    id: number;
+    content: string;
+    authorName: string;
+    postTitle: string;
+    createdAt: string;
+  }[]
+>([]);
 
-  async function fetchRecentComments() {
-    try {
-      const res = (await queryRecentComments({
-        pageNumber: 1,
-        pageSize: 5,
-      })) as any;
-      const records: Comment[] = res.records || [];
-      recentComments.value = records.map((item) => ({
-        id: item.id,
-        content: item.content,
-        authorName: item.user?.username || '',
-        postTitle: item.post?.title || '',
-        createdAt: item.createdAt,
-      }));
-    } catch (e) {
-      // 记录错误以便调试
-      console.error('Operation failed:', e);
-    }
+async function fetchRecentComments() {
+  try {
+    const res = (await queryRecentComments({
+      pageNumber: 1,
+      pageSize: 5,
+    })) as any;
+    const records: Comment[] = res.records || [];
+    recentComments.value = records.map((item) => ({
+      id: item.id,
+      content: item.content,
+      authorName: item.user?.username || "",
+      postTitle: item.post?.title || "",
+      createdAt: item.createdAt,
+    }));
+  } catch (e) {
+    // 记录错误以便调试
+    console.error("Operation failed:", e);
   }
+}
 
-  onMounted(async () => {
-    // 并行加载所有数据，提升性能
-    await Promise.all([
-      fetchStats(),
-      fetchRecentAnnouncements(),
-      fetchRecentPosts(),
-      fetchRecentComments(),
-    ]);
-  });
+onMounted(async () => {
+  // 并行加载所有数据，提升性能
+  await Promise.all([
+    fetchStats(),
+    fetchRecentAnnouncements(),
+    fetchRecentPosts(),
+    fetchRecentComments(),
+  ]);
+});
 
-  // 快捷操作
-  const quickActions = [
-    {
-      key: 'user',
-      label: 'workplace.action.user',
-      icon: 'icon-user-group',
-      bgColor: '#E8F4FF',
-      iconColor: '#1677FF',
-      path: '/management/user',
-    },
-    {
-      key: 'post',
-      label: 'workplace.action.post',
-      icon: 'icon-file',
-      bgColor: '#F0F9EB',
-      iconColor: '#52C41A',
-      path: '/management/post',
-    },
-    {
-      key: 'comment',
-      label: 'workplace.action.comment',
-      icon: 'icon-message',
-      bgColor: '#FFF7E6',
-      iconColor: '#FA8C16',
-      path: '/management/comment',
-    },
-    {
-      key: 'announcement',
-      label: 'workplace.action.announcement',
-      icon: 'icon-notification',
-      bgColor: '#FFF0F6',
-      iconColor: '#EB2F96',
-      path: '/management/announcement',
-    },
-    {
-      key: 'category',
-      label: 'workplace.action.category',
-      icon: 'icon-folder',
-      bgColor: '#F5F0FF',
-      iconColor: '#722ED1',
-      path: '/management/category',
-    },
-    {
-      key: 'tag',
-      label: 'workplace.action.tag',
-      icon: 'icon-tags',
-      bgColor: '#E6F7FF',
-      iconColor: '#13C2C2',
-      path: '/management/tag',
-    },
-    {
-      key: 'accountDeletion',
-      label: 'workplace.action.accountDeletion',
-      icon: 'icon-delete',
-      bgColor: '#FFEDED',
-      iconColor: '#F5222D',
-      path: '/management/account-deletion',
-    },
-    {
-      key: 'searchIndex',
-      label: 'workplace.action.searchIndex',
-      icon: 'icon-search',
-      bgColor: '#FFF4E6',
-      iconColor: '#FA8C16',
-      path: '/management/search-index',
-    },
-  ];
+// 快捷操作
+const quickActions = [
+  {
+    key: "user",
+    label: "workplace.action.user",
+    icon: "icon-user-group",
+    bgColor: "#E8F4FF",
+    iconColor: "#1677FF",
+    path: "/management/user",
+  },
+  {
+    key: "post",
+    label: "workplace.action.post",
+    icon: "icon-file",
+    bgColor: "#F0F9EB",
+    iconColor: "#52C41A",
+    path: "/management/post",
+  },
+  {
+    key: "comment",
+    label: "workplace.action.comment",
+    icon: "icon-message",
+    bgColor: "#FFF7E6",
+    iconColor: "#FA8C16",
+    path: "/management/comment",
+  },
+  {
+    key: "announcement",
+    label: "workplace.action.announcement",
+    icon: "icon-notification",
+    bgColor: "#FFF0F6",
+    iconColor: "#EB2F96",
+    path: "/management/announcement",
+  },
+  {
+    key: "category",
+    label: "workplace.action.category",
+    icon: "icon-folder",
+    bgColor: "#F5F0FF",
+    iconColor: "#722ED1",
+    path: "/management/category",
+  },
+  {
+    key: "tag",
+    label: "workplace.action.tag",
+    icon: "icon-tags",
+    bgColor: "#E6F7FF",
+    iconColor: "#13C2C2",
+    path: "/management/tag",
+  },
+  {
+    key: "accountDeletion",
+    label: "workplace.action.accountDeletion",
+    icon: "icon-delete",
+    bgColor: "#FFEDED",
+    iconColor: "#F5222D",
+    path: "/management/account-deletion",
+  },
+  {
+    key: "searchIndex",
+    label: "workplace.action.searchIndex",
+    icon: "icon-search",
+    bgColor: "#FFF4E6",
+    iconColor: "#FA8C16",
+    path: "/management/search-index",
+  },
+];
 
-  function navigateTo(path: string) {
-    router.push(path);
-  }
+function navigateTo(path: string) {
+  router.push(path);
+}
 
-  function getTypeLabel(type: string) {
-    const map: Record<string, string> = {
-      INFO: '通知',
-      WARNING: '警告',
-      ERROR: '重要',
-    };
-    return map[type] || type;
-  }
+function getTypeLabel(type: string) {
+  const map: Record<string, string> = {
+    INFO: "通知",
+    WARNING: "警告",
+    ERROR: "重要",
+  };
+  return map[type] || type;
+}
 
-  defineOptions({
-    name: 'Dashboard',
-  });
+defineOptions({
+  name: "Dashboard",
+});
 </script>
 
-<style lang="less" scoped>
-  .workplace {
-    min-height: 100%;
-    padding: 16px 20px;
-    background-color: var(--color-fill-2);
-  }
+<style lang="scss" scoped>
+.workplace {
+  min-height: 100%;
+  padding: 16px 20px;
+  background-color: var(--color-fill-2);
+}
 
-  // 欢迎横幅
-  .welcome-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    padding: 20px 24px;
+// 欢迎横幅
+.welcome-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 20px 24px;
+  color: #fff;
+  background: linear-gradient(135deg, #165dff 0%, #4096ff 50%, #69b1ff 100%);
+  border-radius: 8px;
+
+  .welcome-title {
+    margin: 0 0 4px !important;
     color: #fff;
-    background: linear-gradient(135deg, #165dff 0%, #4096ff 50%, #69b1ff 100%);
-    border-radius: 8px;
-
-    .welcome-title {
-      margin: 0 0 4px !important;
-      color: #fff;
-    }
-
-    .welcome-subtitle {
-      color: rgb(255 255 255 / 80%);
-      font-size: 14px;
-    }
-
-    .welcome-meta {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-
-      .meta-item {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        align-items: center;
-
-        .meta-label {
-          color: rgb(255 255 255 / 65%);
-          font-size: 12px;
-        }
-
-        .meta-value {
-          color: rgb(255 255 255 / 95%);
-          font-weight: 500;
-          font-size: 14px;
-          line-height: 24px;
-        }
-
-        .role-tag {
-          display: inline-flex;
-          gap: 6px;
-          align-items: center;
-          padding: 2px 12px;
-          color: #fff;
-          font-weight: 500;
-          font-size: 13px;
-          line-height: 20px;
-          background: rgb(255 255 255 / 18%);
-          border: 1px solid rgb(255 255 255 / 25%);
-          border-radius: 12px;
-          backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
-
-          .role-dot {
-            flex-shrink: 0;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-          }
-        }
-      }
-    }
   }
 
-  // 统计卡片行
-  .stat-row {
-    margin-bottom: 16px;
+  .welcome-subtitle {
+    color: rgb(255 255 255 / 80%);
+    font-size: 14px;
   }
 
-  .stat-card {
-    margin-bottom: 16px;
-    border-radius: 8px;
-    cursor: default;
-    transition: all 0.2s ease;
+  .welcome-meta {
+    display: flex;
+    gap: 24px;
+    align-items: center;
 
-    &:hover {
-      box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
-      transform: translateY(-2px);
-    }
-
-    .stat-card-inner {
+    .meta-item {
       display: flex;
-      gap: 12px;
+      flex-direction: column;
+      gap: 4px;
       align-items: center;
-    }
 
-    .stat-icon {
-      display: flex;
-      flex-shrink: 0;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      font-size: 22px;
-      border-radius: 10px;
-    }
-
-    // 各卡片配色
-    &--users .stat-icon {
-      color: #165dff;
-      background-color: #e8f3ff;
-    }
-
-    &--posts .stat-icon {
-      color: #00b42a;
-      background-color: #e8ffea;
-    }
-
-    &--comments .stat-icon {
-      color: #ff7d00;
-      background-color: #fff3e8;
-    }
-
-    &--announcements .stat-icon {
-      color: #f5319d;
-      background-color: #ffe8f2;
-    }
-
-    &--categories .stat-icon {
-      color: #722ed1;
-      background-color: #f3e8ff;
-    }
-
-    &--tags .stat-icon {
-      color: #14c9c9;
-      background-color: #e8f9ff;
-    }
-
-    :deep(.arco-statistic) {
-      .arco-statistic-title {
-        margin-bottom: 2px;
-        color: var(--color-text-3);
+      .meta-label {
+        color: rgb(255 255 255 / 65%);
         font-size: 12px;
       }
 
-      .arco-statistic-value {
-        font-weight: 600;
-        font-size: 22px;
-      }
-    }
-  }
-
-  // 内容区域
-  .content-row {
-    .section-card {
-      margin-bottom: 16px;
-      border-radius: 8px;
-
-      :deep(.arco-card-header) {
-        border-bottom: 1px solid var(--color-border-2);
-      }
-    }
-  }
-
-  // 快捷操作
-  .quick-action-item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-    padding: 16px 8px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-
-    &:hover {
-      background-color: var(--color-fill-2);
-      box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
-      transform: translateY(-2px);
-
-      .quick-action-icon {
-        box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
-        transform: scale(1.05);
-      }
-
-      .quick-action-label {
-        color: rgb(var(--primary-6));
+      .meta-value {
+        color: rgb(255 255 255 / 95%);
         font-weight: 500;
+        font-size: 14px;
+        line-height: 24px;
+      }
+
+      .role-tag {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        padding: 2px 12px;
+        color: #fff;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 20px;
+        background: rgb(255 255 255 / 18%);
+        border: 1px solid rgb(255 255 255 / 25%);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+
+        .role-dot {
+          flex-shrink: 0;
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+        }
       }
     }
+  }
+}
 
-    &:active {
-      transform: translateY(0);
+// 统计卡片行
+.stat-row {
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  cursor: default;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+    transform: translateY(-2px);
+  }
+
+  .stat-card-inner {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .stat-icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    border-radius: 10px;
+  }
+
+  // 各卡片配色
+  &--users .stat-icon {
+    color: #165dff;
+    background-color: #e8f3ff;
+  }
+
+  &--posts .stat-icon {
+    color: #00b42a;
+    background-color: #e8ffea;
+  }
+
+  &--comments .stat-icon {
+    color: #ff7d00;
+    background-color: #fff3e8;
+  }
+
+  &--announcements .stat-icon {
+    color: #f5319d;
+    background-color: #ffe8f2;
+  }
+
+  &--categories .stat-icon {
+    color: #722ed1;
+    background-color: #f3e8ff;
+  }
+
+  &--tags .stat-icon {
+    color: #14c9c9;
+    background-color: #e8f9ff;
+  }
+
+  :deep(.arco-statistic) {
+    .arco-statistic-title {
+      margin-bottom: 2px;
+      color: var(--color-text-3);
+      font-size: 12px;
     }
+
+    .arco-statistic-value {
+      font-weight: 600;
+      font-size: 22px;
+    }
+  }
+}
+
+// 内容区域
+.content-row {
+  .section-card {
+    margin-bottom: 16px;
+    border-radius: 8px;
+
+    :deep(.arco-card-header) {
+      border-bottom: 1px solid var(--color-border-2);
+    }
+  }
+}
+
+// 快捷操作
+.quick-action-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  padding: 16px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background-color: var(--color-fill-2);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+    transform: translateY(-2px);
 
     .quick-action-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+      transform: scale(1.05);
     }
 
     .quick-action-label {
-      color: var(--color-text-2);
-      font-size: 13px;
-      line-height: 1.3;
-      text-align: center;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      color: rgb(var(--primary-6));
+      font-weight: 500;
     }
   }
 
-  // 公告
-  .announcement-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  &:active {
+    transform: translateY(0);
   }
 
-  .announcement-item {
+  .quick-action-icon {
     display: flex;
-    gap: 10px;
     align-items: center;
-    padding: 10px 12px;
-    border-radius: 8px;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .quick-action-label {
+    color: var(--color-text-2);
+    font-size: 13px;
+    line-height: 1.3;
+    text-align: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+// 公告
+.announcement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.announcement-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--color-fill-2);
+
+    .announcement-title {
+      color: rgb(var(--primary-6));
+    }
+  }
+}
+
+.announcement-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &--info {
+    background-color: #1677ff;
+  }
+
+  &--warning {
+    background-color: #ff7d00;
+  }
+
+  &--error {
+    background-color: #f53f3f;
+  }
+}
+
+.announcement-title {
+  flex: 1;
+  overflow: hidden;
+  color: var(--color-text-1);
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.announcement-time {
+  flex-shrink: 0;
+  color: var(--color-text-4);
+  font-size: 13px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+// 大尺寸卡片
+.section-card--large {
+  :deep(.arco-card-header-title) {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  :deep(.arco-card-body) {
+    padding: 20px;
+  }
+
+  // 表格行悬浮样式（最近帖子、最近评论）
+  :deep(.arco-table-tr) {
     cursor: pointer;
     transition: background-color 0.2s ease;
 
     &:hover {
       background-color: var(--color-fill-2);
+    }
 
-      .announcement-title {
-        color: rgb(var(--primary-6));
-      }
+    &:active {
+      background-color: var(--color-fill-3);
     }
   }
+}
 
-  .announcement-dot {
-    flex-shrink: 0;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+// 表格
+.view-count {
+  color: var(--color-text-3);
+  font-weight: 500;
+  font-size: 14px;
+}
 
-    &--info {
-      background-color: #1677ff;
-    }
+.comment-count {
+  color: rgb(var(--primary-6));
+  font-weight: 600;
+  font-size: 14px;
+}
 
-    &--warning {
-      background-color: #ff7d00;
-    }
-
-    &--error {
-      background-color: #f53f3f;
-    }
-  }
-
-  .announcement-title {
-    flex: 1;
-    overflow: hidden;
-    color: var(--color-text-1);
-    font-size: 14px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    transition: color 0.2s ease;
-  }
-
-  .announcement-time {
-    flex-shrink: 0;
-    color: var(--color-text-4);
-    font-size: 13px;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
-  // 大尺寸卡片
-  .section-card--large {
-    :deep(.arco-card-header-title) {
-      font-weight: 600;
-      font-size: 16px;
-    }
-
-    :deep(.arco-card-body) {
-      padding: 20px;
-    }
-
-    // 表格行悬浮样式（最近帖子、最近评论）
-    :deep(.arco-table-tr) {
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-
-      &:hover {
-        background-color: var(--color-fill-2);
-      }
-
-      &:active {
-        background-color: var(--color-fill-3);
-      }
-    }
-  }
-
-  // 表格
-  .view-count {
-    color: var(--color-text-3);
-    font-weight: 500;
-    font-size: 14px;
-  }
-
-  .comment-count {
-    color: rgb(var(--primary-6));
+:deep(.arco-table) {
+  .arco-table-th {
     font-weight: 600;
-    font-size: 14px;
+    background-color: var(--color-fill-1);
+  }
+}
+
+// 响应式
+@media (width <= 768px) {
+  .workplace {
+    padding: 12px;
   }
 
-  :deep(.arco-table) {
-    .arco-table-th {
-      font-weight: 600;
-      background-color: var(--color-fill-1);
+  .welcome-banner {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+
+    .welcome-meta {
+      width: 100%;
     }
   }
 
-  // 响应式
-  @media (width <= 768px) {
-    .workplace {
-      padding: 12px;
-    }
-
-    .welcome-banner {
-      flex-direction: column;
-      gap: 12px;
-      align-items: flex-start;
-
-      .welcome-meta {
-        width: 100%;
-      }
-    }
-
-    .stat-card .stat-card-inner {
-      gap: 8px;
-    }
+  .stat-card .stat-card-inner {
+    gap: 8px;
   }
+}
 </style>

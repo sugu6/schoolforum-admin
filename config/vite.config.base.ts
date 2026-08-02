@@ -37,13 +37,8 @@ export default defineConfig({
   },
   css: {
     preprocessorOptions: {
-      less: {
-        modifyVars: {
-          hack: `true; @import (reference) "${resolve(
-            'src/assets/style/breakpoint.less'
-          )}";`,
-        },
-        javascriptEnabled: true,
+      scss: {
+        additionalData: `@use "@/assets/style/breakpoint.scss" as *;`,
       },
     },
   },

@@ -10,6 +10,7 @@ export default mergeConfig(
     base: '/admin/',
     plugins: [configCompressPlugin('gzip'), configVisualizerPlugin()],
     build: {
+      chunkSizeWarningLimit: 1500,
       rollupOptions: {
         output: {
           // rolldown 要求 manualChunks 为函数形式
@@ -45,7 +46,6 @@ export default mergeConfig(
             return undefined;
           },
         },
-        chunkSizeWarningLimit: 1500,
       },
       // 启用更好的 tree-shaking
       treeshake: true,

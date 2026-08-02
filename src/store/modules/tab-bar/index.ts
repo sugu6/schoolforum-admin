@@ -1,17 +1,17 @@
-import type { RouteLocationNormalized } from 'vue-router';
-import { defineStore } from 'pinia';
+import type { RouteLocationNormalized } from "vue-router";
+import { defineStore } from "pinia";
 import {
   DEFAULT_ROUTE,
   DEFAULT_ROUTE_NAME,
   REDIRECT_ROUTE_NAME,
-} from '@/router/constants';
-import { isString } from '@/utils/is';
-import { TabBarState, TagProps } from './types';
+} from "@/router/constants";
+import { isString } from "@/utils/is";
+import { TabBarState, TagProps } from "./types";
 
 const formatTag = (route: RouteLocationNormalized): TagProps => {
   const { name, meta, fullPath, query } = route;
   return {
-    title: meta.locale || '',
+    title: meta.locale || "",
     name: String(name),
     fullPath,
     query,
@@ -21,7 +21,7 @@ const formatTag = (route: RouteLocationNormalized): TagProps => {
 
 const BAN_LIST = [REDIRECT_ROUTE_NAME];
 
-const useAppStore = defineStore('tabBar', {
+const useAppStore = defineStore("tabBar", {
   state: (): TabBarState => ({
     cacheTabList: [DEFAULT_ROUTE_NAME],
     tagList: [DEFAULT_ROUTE],
@@ -53,7 +53,7 @@ const useAppStore = defineStore('tabBar', {
       if (index > -1) this.cacheTabList.splice(index, 1);
     },
     addCache(name: string) {
-      if (isString(name) && name !== '' && !this.cacheTabList.includes(name)) {
+      if (isString(name) && name !== "" && !this.cacheTabList.includes(name)) {
         this.cacheTabList.push(name);
       }
     },

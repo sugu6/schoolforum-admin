@@ -1,5 +1,5 @@
-import axios from 'axios';
-import type { PageResponse } from '@/types/api';
+import axios from "axios";
+import type { PageResponse } from "@/types/api";
 
 export interface Post {
   id: number;
@@ -35,7 +35,7 @@ export interface PostListParams {
 export async function getPostList(
   params: PostListParams,
 ): Promise<PageResponse<Post>> {
-  const res = await axios.get<PageResponse<Post>>('/posts/list/page', {
+  const res = await axios.get<PageResponse<Post>>("/posts/list/page", {
     params,
   });
   return res.data;

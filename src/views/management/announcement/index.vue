@@ -64,7 +64,7 @@
               size="small"
               @click="handleToggleTop(record.id)"
             >
-              {{ record.isTop === 1 ? '取消置顶' : '置顶' }}
+              {{ record.isTop === 1 ? "取消置顶" : "置顶" }}
             </a-button>
             <a-button type="text" size="small" @click="handleEdit(record)">
               编辑
@@ -126,198 +126,198 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, onMounted } from 'vue';
-  import { Message } from '@arco-design/web-vue';
-  import type { TableColumnData } from '@arco-design/web-vue';
-  import {
-    getAnnouncementList,
-    createAnnouncement,
-    updateAnnouncement,
-    deleteAnnouncement,
-    publishAnnouncement,
-    offlineAnnouncement,
-    toggleAnnouncementTop,
-    type Announcement,
-    type AnnouncementType,
-  } from '@/api/announcement';
-  import { MarkdownRenderer } from '@/components';
-  import dayjs from 'dayjs';
+import { ref, reactive, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
+import type { TableColumnData } from "@arco-design/web-vue";
+import {
+  getAnnouncementList,
+  createAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
+  publishAnnouncement,
+  offlineAnnouncement,
+  toggleAnnouncementTop,
+  type Announcement,
+  type AnnouncementType,
+} from "@/api/announcement";
+import { MarkdownRenderer } from "@/components";
+import dayjs from "dayjs";
 
-  const loading = ref(false);
-  const tableData = ref<Announcement[]>([]);
-  const formVisible = ref(false);
-  const isEdit = ref(false);
-  const currentId = ref<number | null>(null);
-  const formRef = ref();
+const loading = ref(false);
+const tableData = ref<Announcement[]>([]);
+const formVisible = ref(false);
+const isEdit = ref(false);
+const currentId = ref<number | null>(null);
+const formRef = ref();
 
-  const pagination = reactive({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  });
+const pagination = reactive({
+  current: 1,
+  pageSize: 10,
+  total: 0,
+});
 
-  const formData = reactive({
-    title: '',
-    type: 'INFO' as AnnouncementType,
-    content: '',
-  });
+const formData = reactive({
+  title: "",
+  type: "INFO" as AnnouncementType,
+  content: "",
+});
 
-  const rules = {
-    title: [{ required: true, message: '请输入公告标题' }],
-    type: [{ required: true, message: '请选择公告类型' }],
-    content: [{ required: true, message: '请输入公告内容' }],
-  };
+const rules = {
+  title: [{ required: true, message: "请输入公告标题" }],
+  type: [{ required: true, message: "请选择公告类型" }],
+  content: [{ required: true, message: "请输入公告内容" }],
+};
 
-  const columns: TableColumnData[] = [
-    { title: 'ID', dataIndex: 'id', width: 80 },
-    { title: '标题', dataIndex: 'title' },
-    { title: '类型', slotName: 'type', width: 100 },
-    { title: '状态', slotName: 'status', width: 100 },
-    { title: '置顶', slotName: 'isTop', width: 80 },
-    { title: '创建时间', slotName: 'createdAt', width: 180 },
-    { title: '操作', slotName: 'operations', width: 280 },
-  ];
+const columns: TableColumnData[] = [
+  { title: "ID", dataIndex: "id", width: 80 },
+  { title: "标题", dataIndex: "title" },
+  { title: "类型", slotName: "type", width: 100 },
+  { title: "状态", slotName: "status", width: 100 },
+  { title: "置顶", slotName: "isTop", width: 80 },
+  { title: "创建时间", slotName: "createdAt", width: 180 },
+  { title: "操作", slotName: "operations", width: 280 },
+];
 
-  const formatDate = (date: string | undefined) => {
-    if (!date) return '-';
-    return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
-  };
+const formatDate = (date: string | undefined) => {
+  if (!date) return "-";
+  return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+};
 
-  const fetchData = async () => {
-    loading.value = true;
-    try {
-      const res = await getAnnouncementList({
-        pageNumber: pagination.current,
-        pageSize: pagination.pageSize,
-      });
-      tableData.value = res.records || [];
-      pagination.total = res.totalRow || 0;
-    } catch (error) {
-      Message.error('获取公告列表失败');
-    } finally {
-      loading.value = false;
+const fetchData = async () => {
+  loading.value = true;
+  try {
+    const res = await getAnnouncementList({
+      pageNumber: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+    tableData.value = res.records || [];
+    pagination.total = res.totalRow || 0;
+  } catch (error) {
+    Message.error("获取公告列表失败");
+  } finally {
+    loading.value = false;
+  }
+};
+
+const onPageChange = (page: number) => {
+  pagination.current = page;
+  fetchData();
+};
+
+const handleCreate = () => {
+  isEdit.value = false;
+  currentId.value = null;
+  formVisible.value = true;
+};
+
+const handleEdit = (record: Announcement) => {
+  isEdit.value = true;
+  currentId.value = record.id;
+  formData.title = record.title;
+  formData.type = record.type;
+  formData.content = record.content;
+  formVisible.value = true;
+};
+
+const handleSubmit = async () => {
+  try {
+    await formRef.value?.validate();
+    if (isEdit.value && currentId.value) {
+      await updateAnnouncement(currentId.value, formData);
+      Message.success("更新成功");
+    } else {
+      await createAnnouncement(formData);
+      Message.success("创建成功");
     }
-  };
-
-  const onPageChange = (page: number) => {
-    pagination.current = page;
+    formVisible.value = false;
+    resetForm();
     fetchData();
-  };
+  } catch (error) {
+    Message.error("操作失败");
+  }
+};
 
-  const handleCreate = () => {
-    isEdit.value = false;
-    currentId.value = null;
-    formVisible.value = true;
-  };
+const resetForm = () => {
+  formData.title = "";
+  formData.type = "INFO";
+  formData.content = "";
+  formRef.value?.resetFields();
+};
 
-  const handleEdit = (record: Announcement) => {
-    isEdit.value = true;
-    currentId.value = record.id;
-    formData.title = record.title;
-    formData.type = record.type;
-    formData.content = record.content;
-    formVisible.value = true;
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await formRef.value?.validate();
-      if (isEdit.value && currentId.value) {
-        await updateAnnouncement(currentId.value, formData);
-        Message.success('更新成功');
-      } else {
-        await createAnnouncement(formData);
-        Message.success('创建成功');
-      }
-      formVisible.value = false;
-      resetForm();
-      fetchData();
-    } catch (error) {
-      Message.error('操作失败');
-    }
-  };
-
-  const resetForm = () => {
-    formData.title = '';
-    formData.type = 'INFO';
-    formData.content = '';
-    formRef.value?.resetFields();
-  };
-
-  const handleDelete = async (id: number) => {
-    try {
-      await deleteAnnouncement(id);
-      Message.success('删除成功');
-      fetchData();
-    } catch (error) {
-      Message.error('删除失败');
-    }
-  };
-
-  const handlePublish = async (id: number) => {
-    try {
-      await publishAnnouncement(id);
-      Message.success('发布成功');
-      fetchData();
-    } catch (error) {
-      Message.error('发布失败');
-    }
-  };
-
-  const handleOffline = async (id: number) => {
-    try {
-      await offlineAnnouncement(id);
-      Message.success('下架成功');
-      fetchData();
-    } catch (error) {
-      Message.error('下架失败');
-    }
-  };
-
-  const handleToggleTop = async (id: number) => {
-    try {
-      await toggleAnnouncementTop(id);
-      Message.success('操作成功');
-      fetchData();
-    } catch (error) {
-      Message.error('操作失败');
-    }
-  };
-
-  onMounted(() => {
+const handleDelete = async (id: number) => {
+  try {
+    await deleteAnnouncement(id);
+    Message.success("删除成功");
     fetchData();
-  });
+  } catch (error) {
+    Message.error("删除失败");
+  }
+};
+
+const handlePublish = async (id: number) => {
+  try {
+    await publishAnnouncement(id);
+    Message.success("发布成功");
+    fetchData();
+  } catch (error) {
+    Message.error("发布失败");
+  }
+};
+
+const handleOffline = async (id: number) => {
+  try {
+    await offlineAnnouncement(id);
+    Message.success("下架成功");
+    fetchData();
+  } catch (error) {
+    Message.error("下架失败");
+  }
+};
+
+const handleToggleTop = async (id: number) => {
+  try {
+    await toggleAnnouncementTop(id);
+    Message.success("操作成功");
+    fetchData();
+  } catch (error) {
+    Message.error("操作失败");
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
 </script>
 
 <script lang="ts">
-  export default {
-    name: 'AnnouncementManagement',
-  };
+export default {
+  name: "AnnouncementManagement",
+};
 </script>
 
-<style lang="less" scoped>
-  .container {
-    padding: 16px;
-  }
+<style lang="scss" scoped>
+.container {
+  padding: 16px;
+}
 
-  .general-card {
-    min-height: 100%;
-  }
+.general-card {
+  min-height: 100%;
+}
 
-  .markdown-preview {
-    min-height: 120px;
-    max-height: 400px;
-    padding: 12px 16px;
-    overflow-y: auto;
-    font-size: 13px;
-    line-height: 1.8;
-    background: var(--color-fill-1);
-    border: 1px solid var(--color-border-2);
-    border-radius: 6px;
+.markdown-preview {
+  min-height: 120px;
+  max-height: 400px;
+  padding: 12px 16px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.8;
+  background: var(--color-fill-1);
+  border: 1px solid var(--color-border-2);
+  border-radius: 6px;
 
-    .preview-empty {
-      color: var(--color-text-3);
-      font-style: italic;
-    }
+  .preview-empty {
+    color: var(--color-text-3);
+    font-style: italic;
   }
+}
 </style>

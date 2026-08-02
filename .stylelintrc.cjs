@@ -1,22 +1,11 @@
 module.exports = {
-  extends: [
-    'stylelint-config-standard',
-    'stylelint-config-rational-order',
-    'stylelint-config-recommended-vue',
-  ],
+  extends: ['stylelint-config-recommended-vue/scss'],
   defaultSeverity: 'warning',
-  plugins: ['stylelint-order'],
   rules: {
     'at-rule-no-unknown': [
       true,
       {
-        ignoreAtRules: ['plugin'],
-      },
-    ],
-    'rule-empty-line-before': [
-      'always',
-      {
-        except: ['after-single-line-comment', 'first-nested'],
+        ignoreAtRules: ['plugin', 'use', 'forward', 'import'],
       },
     ],
     'selector-pseudo-class-no-unknown': [

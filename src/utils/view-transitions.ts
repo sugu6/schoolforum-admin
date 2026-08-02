@@ -18,14 +18,14 @@ export function startViewTransition(
       Math.max(options.y, window.innerHeight - options.y),
     );
 
-    document.documentElement.style.setProperty('--x', `${options.x}px`);
-    document.documentElement.style.setProperty('--y', `${options.y}px`);
-    document.documentElement.style.setProperty('--r', `${endRadius}px`);
+    document.documentElement.style.setProperty("--x", `${options.x}px`);
+    document.documentElement.style.setProperty("--y", `${options.y}px`);
+    document.documentElement.style.setProperty("--r", `${endRadius}px`);
   }
 
   document.startViewTransition(callback);
 }
 
 export function getViewTransitionSupport(): boolean {
-  return 'startViewTransition' in document;
+  return "startViewTransition" in document;
 }

@@ -11,16 +11,16 @@
 | 类别 | 技术 |
 |------|------|
 | 框架 | Vue 3 (Composition API, `<script setup>`) |
-| 语言 | TypeScript 4.8 |
-| 构建 | Vite 3（配置文件在 `config/` 目录） |
+| 语言 | TypeScript 6.0 |
+| 构建 | Vite 8（配置文件在 `config/` 目录） |
 | 包管理器 | **pnpm**（锁文件: `pnpm-lock.yaml`） |
-| UI 库 | @arco-design/web-vue ^2.44.7 |
-| 状态管理 | Pinia |
+| UI 库 | @arco-design/web-vue ^2.55.0 |
+| 状态管理 | Pinia 4 |
 | 路由 | Vue Router 4 |
 | HTTP | Axios（JWT Bearer Token） |
 | 图表 | ECharts + vue-echarts |
-| 国际化 | vue-i18n (zh-CN, en-US) |
-| CSS | Less |
+| 国际化 | vue-i18n 11 (zh-CN, en-US) |
+| CSS | Sass (SCSS) |
 | 代码质量 | ESLint (Airbnb), Prettier, Stylelint, Husky + lint-staged |
 | 提交规范 | commitlint (`@commitlint/config-conventional`) |
 
@@ -282,9 +282,9 @@ interface Comment {
 
 ### 代码规范
 - **ESLint**：`airbnb-base` + `@typescript-eslint/recommended` + `plugin:vue/vue3-recommended` + `plugin:prettier/recommended`
-- **Prettier**：单引号、分号、80 字符宽、2 空格缩进
-- **Stylelint**：`stylelint-config-standard` + `stylelint-config-recommended-vue`
-- **Husky**：`pre-commit` 运行 `npm run lint-staged`；`commit-msg` 运行 `pnpm commitlint --edit`
+- **Prettier**：使用默认配置（`.prettierrc.cjs` 为空），不维护自定义格式规则
+- **Stylelint**：`stylelint-config-recommended-vue/scss`（基础 Vue + SCSS 配置）
+- **Husky**：`pre-commit` 运行 `pnpm lint-staged`；`commit-msg` 运行 `pnpm commitlint --edit`
 - **提交格式**：Conventional Commits (`type(scope): description`)
 
 ### 路由变更通信

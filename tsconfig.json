@@ -12,6 +12,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
+    "ignoreDeprecations": "6.0",
     "lib": ["ES2022", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "isolatedModules": true,

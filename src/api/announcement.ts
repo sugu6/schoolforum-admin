@@ -1,8 +1,8 @@
-import axios from 'axios';
-import type { PageResponse } from '@/types/api';
+import axios from "axios";
+import type { PageResponse } from "@/types/api";
 
-export type AnnouncementType = 'INFO' | 'WARNING' | 'ERROR';
-export type AnnouncementStatus = 'DRAFT' | 'PUBLISHED' | 'OFFLINE';
+export type AnnouncementType = "INFO" | "WARNING" | "ERROR";
+export type AnnouncementStatus = "DRAFT" | "PUBLISHED" | "OFFLINE";
 
 export interface Announcement {
   id: number;
@@ -42,7 +42,7 @@ export async function getAnnouncementList(
   params: AnnouncementListParams,
 ): Promise<PageResponse<Announcement>> {
   const res = await axios.get<PageResponse<Announcement>>(
-    '/announcements/admin/list',
+    "/announcements/admin/list",
     {
       params,
     },
@@ -53,7 +53,7 @@ export async function getAnnouncementList(
 export async function createAnnouncement(
   data: AnnouncementCreateRequest,
 ): Promise<Announcement> {
-  const res = await axios.post<Announcement>('/announcements', data);
+  const res = await axios.post<Announcement>("/announcements", data);
   return res.data;
 }
 

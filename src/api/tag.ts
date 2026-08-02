@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-export type TagStatus = 'ACTIVE' | 'INACTIVE' | 'PENDING_DELETION';
+export type TagStatus = "ACTIVE" | "INACTIVE" | "PENDING_DELETION";
 
 export interface Tag {
   id: number;
@@ -25,7 +25,7 @@ export interface TagUpdateRequest {
 }
 
 export async function getTagList(): Promise<Tag[]> {
-  const res = await axios.get<Tag[]>('/tags/list');
+  const res = await axios.get<Tag[]>("/tags/list");
   return res.data;
 }
 
@@ -36,7 +36,7 @@ export async function getTagDetail(id: number): Promise<Tag> {
 
 export async function createTag(data: TagCreateRequest): Promise<Tag> {
   // 后端 /tags/add 使用 form/query 参数
-  const res = await axios.post<Tag>('/tags/add', null, { params: data });
+  const res = await axios.post<Tag>("/tags/add", null, { params: data });
   return res.data;
 }
 
@@ -60,6 +60,6 @@ export async function getTagsByCategory(categoryId: number): Promise<Tag[]> {
 }
 
 export async function getEnabledTagList(): Promise<Tag[]> {
-  const res = await axios.get<Tag[]>('/tags/list/enabled');
+  const res = await axios.get<Tag[]>("/tags/list/enabled");
   return res.data;
 }

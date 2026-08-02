@@ -1,5 +1,5 @@
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 // 配置 marked：关闭 mangle，开启 breaks 换行
 marked.setOptions({
@@ -13,15 +13,15 @@ marked.setOptions({
  * 输出经 DOMPurify 净化，防止 XSS（脚本、事件属性、危险协议等）。
  */
 export default function renderMarkdown(content: string): string {
-  if (!content) return '';
+  if (!content) return "";
   try {
     const rawHtml = marked.parse(content, { async: false }) as string;
     return DOMPurify.sanitize(rawHtml, {
       USE_PROFILES: { html: true },
-      FORBID_TAGS: ['style', 'form', 'input', 'textarea', 'button'],
-      FORBID_ATTR: ['srcset'],
+      FORBID_TAGS: ["style", "form", "input", "textarea", "button"],
+      FORBID_ATTR: ["srcset"],
     });
   } catch {
-    return '';
+    return "";
   }
 }

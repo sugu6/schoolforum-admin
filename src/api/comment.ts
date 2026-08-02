@@ -1,5 +1,5 @@
-import axios from 'axios';
-import type { PageResponse } from '@/types/api';
+import axios from "axios";
+import type { PageResponse } from "@/types/api";
 
 export interface CommentPost {
   id: number;
@@ -49,7 +49,7 @@ export interface CommentListParams {
 export async function getCommentList(
   params: CommentListParams,
 ): Promise<PageResponse<Comment>> {
-  const res = await axios.get<PageResponse<Comment>>('/comments/list/page', {
+  const res = await axios.get<PageResponse<Comment>>("/comments/list/page", {
     params,
   });
   return res.data;

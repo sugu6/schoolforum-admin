@@ -1,5 +1,5 @@
-const TOKEN_KEY = 'token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
+const TOKEN_KEY = "token";
+const REFRESH_TOKEN_KEY = "refresh_token";
 
 /**
  * 认证基于后端 httpOnly Cookie（Sa-Token），前端不再读写 token。

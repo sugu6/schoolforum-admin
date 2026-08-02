@@ -8,7 +8,7 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['*.json', '*.js', 'dist/**', 'node_modules/**'],
+    ignores: ['eslint.config.js', '*.json', 'dist/**', 'node_modules/**'],
   },
   js.configs.recommended,
   ...tsPlugin.configs['flat/recommended'],

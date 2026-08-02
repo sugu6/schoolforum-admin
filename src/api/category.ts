@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-export type CategoryStatus = 'ACTIVE' | 'INACTIVE' | 'PENDING_DELETION';
+export type CategoryStatus = "ACTIVE" | "INACTIVE" | "PENDING_DELETION";
 
 export interface Category {
   id: number;
@@ -26,12 +26,12 @@ export interface CategoryUpdateRequest {
 }
 
 export async function getCategoryList(): Promise<Category[]> {
-  const res = await axios.get<Category[]>('/categories/list/page');
+  const res = await axios.get<Category[]>("/categories/list/page");
   return res.data;
 }
 
 export async function getCategoryTree(): Promise<Category[]> {
-  const res = await axios.get<Category[]>('/categories/list');
+  const res = await axios.get<Category[]>("/categories/list");
   return res.data;
 }
 
@@ -43,7 +43,7 @@ export async function getCategoryDetail(id: number): Promise<Category> {
 export async function createCategory(
   data: CategoryCreateRequest,
 ): Promise<Category> {
-  const res = await axios.post<Category>('/categories/add', null, {
+  const res = await axios.post<Category>("/categories/add", null, {
     params: data,
   });
   return res.data;

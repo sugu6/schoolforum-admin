@@ -71,10 +71,10 @@
           currentUser?.email
         }}</a-descriptions-item>
         <a-descriptions-item label="年龄">{{
-          currentUser?.age || '-'
+          currentUser?.age || "-"
         }}</a-descriptions-item>
         <a-descriptions-item label="性别">{{
-          currentUser?.gender || '-'
+          currentUser?.gender || "-"
         }}</a-descriptions-item>
         <a-descriptions-item label="角色">
           <a-tag v-if="currentUser?.role === 'SUPER_ADMIN'" color="#7C3AED"
@@ -110,7 +110,7 @@
           formatDate(currentUser?.lastLoginAt)
         }}</a-descriptions-item>
         <a-descriptions-item label="个人简介" :span="2">{{
-          currentUser?.bio || '-'
+          currentUser?.bio || "-"
         }}</a-descriptions-item>
       </a-descriptions>
     </a-modal>
@@ -148,116 +148,116 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, onMounted } from 'vue';
-  import { Message } from '@arco-design/web-vue';
-  import type { TableColumnData } from '@arco-design/web-vue';
-  import {
-    getUserList,
-    getUserInfoById,
-    deleteUser,
-    updateUser,
-    type User,
-    type UpdateUserData,
-  } from '@/api/user';
-  import { formatDate } from '@/utils/format';
-  import { useTableData } from '@/hooks/use-table-data';
+import { ref, reactive, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
+import type { TableColumnData } from "@arco-design/web-vue";
+import {
+  getUserList,
+  getUserInfoById,
+  deleteUser,
+  updateUser,
+  type User,
+  type UpdateUserData,
+} from "@/api/user";
+import { formatDate } from "@/utils/format";
+import { useTableData } from "@/hooks/use-table-data";
 
-  const detailVisible = ref(false);
-  const currentUser = ref<User | null>(null);
+const detailVisible = ref(false);
+const currentUser = ref<User | null>(null);
 
-  const editVisible = ref(false);
-  const editingUserId = ref<number | null>(null);
-  const editForm = reactive<UpdateUserData>({
-    username: '',
-    email: '',
-    role: '',
-    isActive: '',
+const editVisible = ref(false);
+const editingUserId = ref<number | null>(null);
+const editForm = reactive<UpdateUserData>({
+  username: "",
+  email: "",
+  role: "",
+  isActive: "",
+});
+
+// 使用可复用的表格数据 composable
+const { tableData, loading, pagination, fetchData, onPageChange, refresh } =
+  useTableData<User>({
+    fetchFn: async () => {
+      const res = await getUserList({
+        pageNumber: pagination.current,
+        pageSize: pagination.pageSize,
+      });
+      return res;
+    },
+    pageSize: 10,
+    immediate: false, // 手动控制加载时机
   });
 
-  // 使用可复用的表格数据 composable
-  const { tableData, loading, pagination, fetchData, onPageChange, refresh } =
-    useTableData<User>({
-      fetchFn: async () => {
-        const res = await getUserList({
-          pageNumber: pagination.current,
-          pageSize: pagination.pageSize,
-        });
-        return res;
-      },
-      pageSize: 10,
-      immediate: false, // 手动控制加载时机
-    });
+const columns: TableColumnData[] = [
+  { title: "头像", slotName: "avatarUrl", width: 80 },
+  { title: "用户名", dataIndex: "username", width: 120 },
+  { title: "邮箱", dataIndex: "email", width: 200 },
+  { title: "角色", slotName: "role", width: 100 },
+  { title: "状态", slotName: "isActive", width: 100 },
+  { title: "注册时间", slotName: "createdAt", width: 180 },
+  { title: "操作", slotName: "operations", width: 180 },
+];
 
-  const columns: TableColumnData[] = [
-    { title: '头像', slotName: 'avatarUrl', width: 80 },
-    { title: '用户名', dataIndex: 'username', width: 120 },
-    { title: '邮箱', dataIndex: 'email', width: 200 },
-    { title: '角色', slotName: 'role', width: 100 },
-    { title: '状态', slotName: 'isActive', width: 100 },
-    { title: '注册时间', slotName: 'createdAt', width: 180 },
-    { title: '操作', slotName: 'operations', width: 180 },
-  ];
+const search = () => {
+  refresh();
+};
 
-  const search = () => {
-    refresh();
-  };
+const viewUser = async (user: User) => {
+  try {
+    const res = await getUserInfoById(user.id);
+    currentUser.value = res;
+    detailVisible.value = true;
+  } catch {
+    Message.error("获取用户详情失败");
+  }
+};
 
-  const viewUser = async (user: User) => {
-    try {
-      const res = await getUserInfoById(user.id);
-      currentUser.value = res;
-      detailVisible.value = true;
-    } catch {
-      Message.error('获取用户详情失败');
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    try {
-      await deleteUser(id);
-      Message.success('删除成功');
-      fetchData();
-    } catch {
-      Message.error('删除失败');
-    }
-  };
-
-  const editUser = (user: User) => {
-    editingUserId.value = user.id;
-    editForm.username = user.username || '';
-    editForm.email = user.email || '';
-    editForm.role = user.role || '';
-    editForm.isActive = user.isActive || '';
-    editVisible.value = true;
-  };
-
-  const handleEditSubmit = async () => {
-    if (!editingUserId.value) return;
-    try {
-      await updateUser(editingUserId.value, { ...editForm });
-      Message.success('编辑成功');
-      editVisible.value = false;
-      fetchData();
-    } catch {
-      Message.error('编辑失败');
-    }
-  };
-
-  onMounted(() => {
+const handleDelete = async (id: number) => {
+  try {
+    await deleteUser(id);
+    Message.success("删除成功");
     fetchData();
-  });
+  } catch {
+    Message.error("删除失败");
+  }
+};
 
-  defineOptions({
-    name: 'UserManagement',
-  });
+const editUser = (user: User) => {
+  editingUserId.value = user.id;
+  editForm.username = user.username || "";
+  editForm.email = user.email || "";
+  editForm.role = user.role || "";
+  editForm.isActive = user.isActive || "";
+  editVisible.value = true;
+};
+
+const handleEditSubmit = async () => {
+  if (!editingUserId.value) return;
+  try {
+    await updateUser(editingUserId.value, { ...editForm });
+    Message.success("编辑成功");
+    editVisible.value = false;
+    fetchData();
+  } catch {
+    Message.error("编辑失败");
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
+
+defineOptions({
+  name: "UserManagement",
+});
 </script>
 
-<style lang="less" scoped>
-  .container {
-    padding: 16px;
-  }
+<style lang="scss" scoped>
+.container {
+  padding: 16px;
+}
 
-  .general-card {
-    min-height: 100%;
-  }
+.general-card {
+  min-height: 100%;
+}
 </style>

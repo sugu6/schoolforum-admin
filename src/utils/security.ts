@@ -8,8 +8,8 @@
 export const generateSecureRandom = (length: number = 32): string => {
   const array = new Uint8Array(length);
   crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
-    '',
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+    "",
   );
 };
 
@@ -17,7 +17,7 @@ export const generateSecureRandom = (length: number = 32): string => {
  * 检查是否为有效的 HTTPS 连接
  */
 export const isSecureContext = (): boolean => {
-  return window.isSecureContext || location.protocol === 'https:';
+  return window.isSecureContext || location.protocol === "https:";
 };
 
 /**
@@ -30,18 +30,18 @@ export const setSecureCookie = (
   days: number = 7,
   secure: boolean = true,
 ): void => {
-  const secureFlag = secure && isSecureContext() ? 'Secure;' : '';
+  const secureFlag = secure && isSecureContext() ? "Secure;" : "";
   const expires = new Date();
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
 
   document.cookie = [
     `${name}=${encodeURIComponent(value)}`,
     `expires=${expires.toUTCString()}`,
-    'path=/',
+    "path=/",
     secureFlag,
-    'SameSite=Strict',
+    "SameSite=Strict",
     // HttpOnly 需要在服务端设置
-  ].join('; ');
+  ].join("; ");
 };
 
 /**
@@ -55,13 +55,13 @@ export const safeJsonParse = <T = any>(
     const parsed = JSON.parse(jsonString);
 
     // 检查原型污染：仅当对象自身携带危险键时拒绝
-    if (parsed && typeof parsed === 'object') {
-      const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+    if (parsed && typeof parsed === "object") {
+      const dangerousKeys = ["__proto__", "constructor", "prototype"];
       const hasDangerousKey = dangerousKeys.some((key) =>
         Object.prototype.hasOwnProperty.call(parsed, key),
       );
       if (hasDangerousKey) {
-        console.warn('检测到潜在的 JSON 原型污染攻击');
+        console.warn("检测到潜在的 JSON 原型污染攻击");
         return defaultValue;
       }
     }
@@ -100,11 +100,11 @@ export const isValidUrl = (url: string, allowedDomains?: string[]): boolean => {
  */
 export const sanitizeInput = (input: string): string => {
   return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 };
 
 /**
@@ -117,10 +117,10 @@ export const checkSecuritySupport = (): {
 } => {
   return {
     crypto:
-      typeof crypto !== 'undefined' &&
-      typeof crypto.getRandomValues === 'function',
+      typeof crypto !== "undefined" &&
+      typeof crypto.getRandomValues === "function",
     secureContext: window.isSecureContext || false,
-    serviceWorker: 'serviceWorker' in navigator,
+    serviceWorker: "serviceWorker" in navigator,
   };
 };
 
@@ -128,10 +128,5 @@ export const checkSecuritySupport = (): {
  * 报告安全错误
  */
 export const reportSecurityError = (error: Error, context?: string): void => {
-  console.error(`[Security Error]${context ? ` [${context}]` : ''}:`, error);
-
-  // 在生产环境中，这里应该发送到错误追踪服务
-  if (import.meta.env.PROD) {
-    // TODO: 发送到 Sentry 或其他错误追踪服务
-  }
+  console.error(`[Security Error]${context ? ` [${context}]` : ""}:`, error);
 };

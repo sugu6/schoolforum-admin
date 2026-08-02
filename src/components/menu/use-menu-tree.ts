@@ -1,8 +1,8 @@
-import { computed } from 'vue';
-import { RouteRecordRaw, RouteRecordNormalized } from 'vue-router';
-import usePermission from '@/hooks/permission';
-import { useAppStore } from '@/store';
-import appClientMenus from '@/router/app-menus';
+import { computed } from "vue";
+import { RouteRecordRaw, RouteRecordNormalized } from "vue-router";
+import usePermission from "@/hooks/permission";
+import { useAppStore } from "@/store";
+import appClientMenus from "@/router/app-menus";
 
 // 轻量深拷贝函数（替代 lodash cloneDeep）
 function deepClone<T>(obj: T): T {

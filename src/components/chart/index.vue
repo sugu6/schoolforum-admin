@@ -8,22 +8,22 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, nextTick } from 'vue';
-  import VCharts from 'vue-echarts';
-  import type { EChartsOption } from 'echarts';
+import { ref, nextTick } from "vue";
+import VCharts from "vue-echarts";
+import type { EChartsOption } from "echarts";
 
-  defineProps<{
-    options: EChartsOption;
-    autoResize?: boolean;
-    width?: string;
-    height?: string;
-  }>();
+defineProps<{
+  options: EChartsOption;
+  autoResize?: boolean;
+  width?: string;
+  height?: string;
+}>();
 
-  const renderChart = ref(false);
-  // wait container expand
-  nextTick(() => {
-    renderChart.value = true;
-  });
+const renderChart = ref(false);
+// wait container expand
+nextTick(() => {
+  renderChart.value = true;
+});
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="scss"></style>

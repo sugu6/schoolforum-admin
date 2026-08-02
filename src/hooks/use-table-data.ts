@@ -1,6 +1,6 @@
-import { ref, reactive, onMounted } from 'vue';
-import type { Ref } from 'vue';
-import type { PageResponse } from '@/types/api';
+import { ref, reactive, onMounted } from "vue";
+import type { Ref } from "vue";
+import type { PageResponse } from "@/types/api";
 
 interface UseTableDataOptions<T> {
   fetchFn: (params: {
@@ -40,7 +40,7 @@ export function useTableData<T>(options: UseTableDataOptions<T>) {
       tableData.value = data?.records || [];
       pagination.total = data?.totalRow || 0;
     } catch (error) {
-      console.error('Failed to fetch table data:', error);
+      console.error("Failed to fetch table data:", error);
       tableData.value = [];
     } finally {
       loading.value = false;

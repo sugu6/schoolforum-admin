@@ -1,16 +1,16 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 import {
   login as userLogin,
   logout as userLogout,
   getUserInfo,
   LoginData,
-} from '@/api/user';
-import { clearToken } from '@/utils/auth';
-import { removeRouteListener } from '@/utils/route-listener';
-import { UserState } from './types';
-import useAppStore from '../app';
+} from "@/api/user";
+import { clearToken } from "@/utils/auth";
+import { removeRouteListener } from "@/utils/route-listener";
+import { UserState } from "./types";
+import useAppStore from "../app";
 
-const useUserStore = defineStore('user', {
+const useUserStore = defineStore("user", {
   state: (): UserState => ({
     name: undefined,
     avatar: undefined,
@@ -27,7 +27,7 @@ const useUserStore = defineStore('user', {
     registrationDate: undefined,
     accountId: undefined,
     certification: undefined,
-    role: '',
+    role: "",
   }),
 
   getters: {
@@ -38,9 +38,9 @@ const useUserStore = defineStore('user', {
 
   actions: {
     switchRoles() {
-      if (import.meta.env.MODE !== 'production') {
+      if (import.meta.env.MODE !== "production") {
         return new Promise((resolve) => {
-          this.role = this.role === 'user' ? 'admin' : 'user';
+          this.role = this.role === "user" ? "admin" : "user";
           resolve(this.role);
         });
       }
@@ -61,17 +61,17 @@ const useUserStore = defineStore('user', {
 
         // 防御性检查
         if (!user) {
-          throw new Error('获取用户信息失败：响应为空');
+          throw new Error("获取用户信息失败：响应为空");
         }
 
         this.setInfo({
-          name: user.username || '',
-          avatar: user.avatarUrl || '',
-          email: user.email || '',
-          role: (user.role as any) || '',
+          name: user.username || "",
+          avatar: user.avatarUrl || "",
+          email: user.email || "",
+          role: (user.role as any) || "",
         });
       } catch (error) {
-        console.error('Failed to fetch user info:', error);
+        console.error("Failed to fetch user info:", error);
         throw error;
       }
     },
@@ -82,24 +82,24 @@ const useUserStore = defineStore('user', {
 
         // 防御性检查：确保响应数据结构正确
         if (!res || !res.data) {
-          throw new Error('登录响应格式错误：数据为空');
+          throw new Error("登录响应格式错误：数据为空");
         }
 
         const loginData = res.data;
 
         if (!loginData.user) {
-          throw new Error('登录响应格式错误：用户信息缺失');
+          throw new Error("登录响应格式错误：用户信息缺失");
         }
 
         this.setInfo({
-          name: loginData.user.username || '',
-          avatar: loginData.user.avatarUrl || '',
-          email: loginData.user.email || '',
-          role: (loginData.user.role as any) || '',
+          name: loginData.user.username || "",
+          avatar: loginData.user.avatarUrl || "",
+          email: loginData.user.email || "",
+          role: (loginData.user.role as any) || "",
         });
       } catch (err) {
         clearToken();
-        console.error('Login error:', err);
+        console.error("Login error:", err);
         throw err;
       }
     },

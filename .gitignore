@@ -3,8 +3,14 @@ node_modules
 dist
 dist-ssr
 *.local
-node_modules
-.DS_Store
-dist
-dist-ssr
-*.local
+dev_log.txt
+
+# IDE / Editor
+.trae
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

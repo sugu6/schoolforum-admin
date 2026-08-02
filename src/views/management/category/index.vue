@@ -107,171 +107,168 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, computed, onMounted } from 'vue';
-  import { Message } from '@arco-design/web-vue';
-  import type { TableColumnData } from '@arco-design/web-vue';
-  import {
-    getCategoryTree,
-    createCategory,
-    updateCategory,
-    deleteCategory,
-    type Category,
-    type CategoryStatus,
-  } from '@/api/category';
-  import { formatDate } from '@/utils/format';
+import { ref, reactive, computed, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
+import type { TableColumnData } from "@arco-design/web-vue";
+import {
+  getCategoryTree,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  type Category,
+  type CategoryStatus,
+} from "@/api/category";
+import { formatDate } from "@/utils/format";
 
-  const loading = ref(false);
-  const treeData = ref<Category[]>([]);
-  const formVisible = ref(false);
-  const isEdit = ref(false);
-  const createLevel = ref(1);
-  const currentId = ref<number | null>(null);
-  const formRef = ref();
+const loading = ref(false);
+const treeData = ref<Category[]>([]);
+const formVisible = ref(false);
+const isEdit = ref(false);
+const createLevel = ref(1);
+const currentId = ref<number | null>(null);
+const formRef = ref();
 
-  const pagination = reactive({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  });
+const pagination = reactive({
+  current: 1,
+  pageSize: 10,
+  total: 0,
+});
 
-  const formData = reactive({
-    name: '',
-    parentId: undefined as number | undefined,
-    status: 'ACTIVE' as CategoryStatus,
-  });
+const formData = reactive({
+  name: "",
+  parentId: undefined as number | undefined,
+  status: "ACTIVE" as CategoryStatus,
+});
 
-  const rules = {
-    name: [{ required: true, message: '请输入分类名称' }],
-    parentId: [
-      {
-        required: true,
-        message: '请选择所属一级分类',
-        validator: (
-          value: number | undefined,
-          cb: (error?: string) => void,
-        ) => {
-          if (createLevel.value === 2 && !isEdit.value && !value) {
-            cb('请选择所属一级分类');
-          } else {
-            cb();
-          }
-        },
+const rules = {
+  name: [{ required: true, message: "请输入分类名称" }],
+  parentId: [
+    {
+      required: true,
+      message: "请选择所属一级分类",
+      validator: (value: number | undefined, cb: (error?: string) => void) => {
+        if (createLevel.value === 2 && !isEdit.value && !value) {
+          cb("请选择所属一级分类");
+        } else {
+          cb();
+        }
       },
-    ],
-  };
+    },
+  ],
+};
 
-  const firstLevelCategories = computed(() => {
-    return treeData.value.filter((cat) => cat.level === 1);
-  });
+const firstLevelCategories = computed(() => {
+  return treeData.value.filter((cat) => cat.level === 1);
+});
 
-  const modalTitle = computed(() => {
-    if (isEdit.value) return '编辑分类';
-    return createLevel.value === 1 ? '新建一级分类' : '新建二级分类';
-  });
+const modalTitle = computed(() => {
+  if (isEdit.value) return "编辑分类";
+  return createLevel.value === 1 ? "新建一级分类" : "新建二级分类";
+});
 
-  const columns: TableColumnData[] = [
-    { title: 'ID', dataIndex: 'id', width: 80 },
-    { title: '分类名称', dataIndex: 'name', width: 200 },
-    { title: '层级', slotName: 'level', width: 80 },
-    { title: '帖子数', dataIndex: 'postCount', width: 100 },
-    { title: '状态', slotName: 'status', width: 100 },
-    { title: '创建时间', slotName: 'createdAt', width: 180 },
-    { title: '操作', slotName: 'operations', width: 150 },
-  ];
+const columns: TableColumnData[] = [
+  { title: "ID", dataIndex: "id", width: 80 },
+  { title: "分类名称", dataIndex: "name", width: 200 },
+  { title: "层级", slotName: "level", width: 80 },
+  { title: "帖子数", dataIndex: "postCount", width: 100 },
+  { title: "状态", slotName: "status", width: 100 },
+  { title: "创建时间", slotName: "createdAt", width: 180 },
+  { title: "操作", slotName: "operations", width: 150 },
+];
 
-  const fetchData = async () => {
-    loading.value = true;
-    try {
-      const res = await getCategoryTree();
-      treeData.value = res || [];
-      pagination.total = treeData.value.length;
-    } catch (error) {
-      Message.error('获取分类列表失败');
-    } finally {
-      loading.value = false;
+const fetchData = async () => {
+  loading.value = true;
+  try {
+    const res = await getCategoryTree();
+    treeData.value = res || [];
+    pagination.total = treeData.value.length;
+  } catch (error) {
+    Message.error("获取分类列表失败");
+  } finally {
+    loading.value = false;
+  }
+};
+
+const onPageChange = (page: number) => {
+  pagination.current = page;
+};
+
+const handleCreate = (level: number) => {
+  isEdit.value = false;
+  createLevel.value = level;
+  currentId.value = null;
+  formVisible.value = true;
+};
+
+const handleEdit = (record: Category) => {
+  isEdit.value = true;
+  createLevel.value = record.level;
+  currentId.value = record.id;
+  formData.name = record.name;
+  formData.parentId = record.parentId || undefined;
+  formData.status = record.status;
+  formVisible.value = true;
+};
+
+const handleSubmit = async () => {
+  try {
+    await formRef.value?.validate();
+    if (isEdit.value && currentId.value) {
+      await updateCategory(currentId.value, {
+        name: formData.name,
+        status: formData.status,
+      });
+      Message.success("更新成功");
+    } else {
+      await createCategory({
+        name: formData.name,
+        level: createLevel.value,
+        parentId: createLevel.value === 2 ? formData.parentId : undefined,
+      });
+      Message.success("创建成功");
     }
-  };
-
-  const onPageChange = (page: number) => {
-    pagination.current = page;
-  };
-
-  const handleCreate = (level: number) => {
-    isEdit.value = false;
-    createLevel.value = level;
-    currentId.value = null;
-    formVisible.value = true;
-  };
-
-  const handleEdit = (record: Category) => {
-    isEdit.value = true;
-    createLevel.value = record.level;
-    currentId.value = record.id;
-    formData.name = record.name;
-    formData.parentId = record.parentId || undefined;
-    formData.status = record.status;
-    formVisible.value = true;
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await formRef.value?.validate();
-      if (isEdit.value && currentId.value) {
-        await updateCategory(currentId.value, {
-          name: formData.name,
-          status: formData.status,
-        });
-        Message.success('更新成功');
-      } else {
-        await createCategory({
-          name: formData.name,
-          level: createLevel.value,
-          parentId: createLevel.value === 2 ? formData.parentId : undefined,
-        });
-        Message.success('创建成功');
-      }
-      formVisible.value = false;
-      resetForm();
-      fetchData();
-    } catch (error) {
-      Message.error('操作失败');
-    }
-  };
-
-  const resetForm = () => {
-    formData.name = '';
-    formData.parentId = undefined;
-    formData.status = 'ACTIVE';
-    formRef.value?.resetFields();
-  };
-
-  const handleDelete = async (id: number) => {
-    try {
-      await deleteCategory(id);
-      Message.success('删除成功');
-      fetchData();
-    } catch (error) {
-      Message.error('删除失败');
-    }
-  };
-
-  onMounted(() => {
+    formVisible.value = false;
+    resetForm();
     fetchData();
-  });
+  } catch (error) {
+    Message.error("操作失败");
+  }
+};
+
+const resetForm = () => {
+  formData.name = "";
+  formData.parentId = undefined;
+  formData.status = "ACTIVE";
+  formRef.value?.resetFields();
+};
+
+const handleDelete = async (id: number) => {
+  try {
+    await deleteCategory(id);
+    Message.success("删除成功");
+    fetchData();
+  } catch (error) {
+    Message.error("删除失败");
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
 </script>
 
 <script lang="ts">
-  export default {
-    name: 'CategoryManagement',
-  };
+export default {
+  name: "CategoryManagement",
+};
 </script>
 
-<style lang="less" scoped>
-  .container {
-    padding: 16px;
-  }
+<style lang="scss" scoped>
+.container {
+  padding: 16px;
+}
 
-  .general-card {
-    min-height: 100%;
-  }
+.general-card {
+  min-height: 100%;
+}
 </style>

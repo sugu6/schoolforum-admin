@@ -1,7 +1,7 @@
-import { onMounted, onBeforeMount, onBeforeUnmount } from 'vue';
-import { useDebounceFn } from '@vueuse/core';
-import { useAppStore } from '@/store';
-import { addEventListen, removeEventListen } from '@/utils/event';
+import { onMounted, onBeforeMount, onBeforeUnmount } from "vue";
+import { useDebounceFn } from "@vueuse/core";
+import { useAppStore } from "@/store";
+import { addEventListen, removeEventListen } from "@/utils/event";
 
 const WIDTH = 992; // https://arco.design/vue/component/grid#responsivevalue
 
@@ -15,7 +15,7 @@ export default function useResponsive(immediate?: boolean) {
   function resizeHandler() {
     if (!document.hidden) {
       const isMobile = queryDevice();
-      appStore.toggleDevice(isMobile ? 'mobile' : 'desktop');
+      appStore.toggleDevice(isMobile ? "mobile" : "desktop");
       appStore.toggleMenu(isMobile);
     }
   }
@@ -24,9 +24,9 @@ export default function useResponsive(immediate?: boolean) {
     if (immediate) debounceFn();
   });
   onBeforeMount(() => {
-    addEventListen(window, 'resize', debounceFn);
+    addEventListen(window, "resize", debounceFn);
   });
   onBeforeUnmount(() => {
-    removeEventListen(window, 'resize', debounceFn);
+    removeEventListen(window, "resize", debounceFn);
   });
 }

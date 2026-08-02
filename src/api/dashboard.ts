@@ -1,9 +1,9 @@
-import axios from 'axios';
-import type { TableData } from '@arco-design/web-vue/es/table/interface';
-import type { PageResponse } from '@/types/api';
-import type { Announcement } from './announcement';
-import type { Post } from './post';
-import type { Comment } from './comment';
+import axios from "axios";
+import type { TableData } from "@arco-design/web-vue/es/table/interface";
+import type { PageResponse } from "@/types/api";
+import type { Announcement } from "./announcement";
+import type { Post } from "./post";
+import type { Comment } from "./comment";
 
 export interface ContentDataRecord {
   x: string;
@@ -11,7 +11,7 @@ export interface ContentDataRecord {
 }
 
 export function queryContentData() {
-  return axios.get<ContentDataRecord[]>('/api/content-data');
+  return axios.get<ContentDataRecord[]>("/api/content-data");
 }
 
 export interface PopularRecord {
@@ -22,7 +22,7 @@ export interface PopularRecord {
 }
 
 export function queryPopularList(params: { type: string }) {
-  return axios.get<TableData[]>('/api/popular/list', { params });
+  return axios.get<TableData[]>("/api/popular/list", { params });
 }
 
 export interface DashboardStats {
@@ -43,20 +43,20 @@ export async function queryDashboardStats(): Promise<DashboardStats> {
     categoriesRes,
     tagsRes,
   ] = await Promise.all([
-    axios.get<PageResponse<unknown>>('/users/list/page', {
+    axios.get<PageResponse<unknown>>("/users/list/page", {
       params: { pageNumber: 1, pageSize: 1 },
     }),
-    axios.get<PageResponse<unknown>>('/posts/list/page', {
+    axios.get<PageResponse<unknown>>("/posts/list/page", {
       params: { pageNumber: 1, pageSize: 1 },
     }),
-    axios.get<PageResponse<unknown>>('/comments/list/page', {
+    axios.get<PageResponse<unknown>>("/comments/list/page", {
       params: { pageNumber: 1, pageSize: 1 },
     }),
-    axios.get<PageResponse<unknown>>('/announcements/admin/list', {
+    axios.get<PageResponse<unknown>>("/announcements/admin/list", {
       params: { pageNumber: 1, pageSize: 1 },
     }),
-    axios.get<unknown[]>('/categories/list/page'),
-    axios.get<unknown[]>('/tags/list'),
+    axios.get<unknown[]>("/categories/list/page"),
+    axios.get<unknown[]>("/tags/list"),
   ]);
 
   const stats: DashboardStats = {
@@ -77,7 +77,7 @@ export async function queryRecentAnnouncements(params: {
   pageSize: number;
 }): Promise<PageResponse<Announcement>> {
   const res = await axios.get<PageResponse<Announcement>>(
-    '/announcements/admin/list',
+    "/announcements/admin/list",
     {
       params,
     },
@@ -89,7 +89,7 @@ export async function queryRecentPosts(params: {
   pageNumber: number;
   pageSize: number;
 }): Promise<PageResponse<Post>> {
-  const res = await axios.get<PageResponse<Post>>('/posts/list/page', {
+  const res = await axios.get<PageResponse<Post>>("/posts/list/page", {
     params,
   });
   return res.data;
@@ -99,7 +99,7 @@ export async function queryRecentComments(params: {
   pageNumber: number;
   pageSize: number;
 }): Promise<PageResponse<Comment>> {
-  const res = await axios.get<PageResponse<Comment>>('/comments/list/page', {
+  const res = await axios.get<PageResponse<Comment>>("/comments/list/page", {
     params,
   });
   return res.data;

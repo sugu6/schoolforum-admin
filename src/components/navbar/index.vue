@@ -124,7 +124,7 @@
               <a-space @click="handleLogout">
                 <icon-export />
                 <span>
-                  {{ $t('messageBox.logout') }}
+                  {{ $t("messageBox.logout") }}
                 </span>
               </a-space>
             </a-doption>
@@ -136,133 +136,133 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, inject } from 'vue';
-  import { useDark, useToggle, useFullscreen } from '@vueuse/core';
-  import { useAppStore, useUserStore } from '@/store';
-  import { LOCALE_OPTIONS } from '@/locale';
-  import useLocale from '@/hooks/locale';
-  import useUser from '@/hooks/user';
-  import Menu from '@/components/menu/index.vue';
-  import logoSvg from '@/assets/logo.svg?url';
-  import { startViewTransition } from '@/utils/view-transitions';
-  import MessageBox from '../message-box/index.vue';
+import { computed, ref, inject } from "vue";
+import { useDark, useToggle, useFullscreen } from "@vueuse/core";
+import { useAppStore, useUserStore } from "@/store";
+import { LOCALE_OPTIONS } from "@/locale";
+import useLocale from "@/hooks/locale";
+import useUser from "@/hooks/user";
+import Menu from "@/components/menu/index.vue";
+import logoSvg from "@/assets/logo.svg?url";
+import { startViewTransition } from "@/utils/view-transitions";
+import MessageBox from "../message-box/index.vue";
 
-  const appStore = useAppStore();
-  const userStore = useUserStore();
-  const { logout } = useUser();
-  const { changeLocale, currentLocale } = useLocale();
-  const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
-  const locales = [...LOCALE_OPTIONS];
-  const avatar = computed(() => {
-    return userStore.avatar;
-  });
-  const theme = computed(() => {
-    return appStore.theme;
-  });
-  const topMenu = computed(() => appStore.topMenu && appStore.menu);
-  const dropdownTrigger = computed(() =>
-    appStore.device === 'mobile' ? 'click' : 'hover',
-  );
-  const isDark = useDark({
-    selector: 'body',
-    attribute: 'arco-theme',
-    valueDark: 'dark',
-    valueLight: 'light',
-    storageKey: 'arco-theme',
-    onChanged(dark: boolean) {
-      // overridden default behavior
-      appStore.toggleTheme(dark);
+const appStore = useAppStore();
+const userStore = useUserStore();
+const { logout } = useUser();
+const { changeLocale, currentLocale } = useLocale();
+const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
+const locales = [...LOCALE_OPTIONS];
+const avatar = computed(() => {
+  return userStore.avatar;
+});
+const theme = computed(() => {
+  return appStore.theme;
+});
+const topMenu = computed(() => appStore.topMenu && appStore.menu);
+const dropdownTrigger = computed(() =>
+  appStore.device === "mobile" ? "click" : "hover",
+);
+const isDark = useDark({
+  selector: "body",
+  attribute: "arco-theme",
+  valueDark: "dark",
+  valueLight: "light",
+  storageKey: "arco-theme",
+  onChanged(dark: boolean) {
+    // overridden default behavior
+    appStore.toggleTheme(dark);
+  },
+});
+const toggleTheme = useToggle(isDark);
+const handleToggleTheme = (event: MouseEvent) => {
+  const x = event.clientX;
+  const y = event.clientY;
+
+  startViewTransition(
+    () => {
+      toggleTheme();
     },
+    { x, y },
+  );
+};
+const triggerBtn = ref();
+const handleLogout = () => {
+  logout();
+};
+const setDropDownVisible = () => {
+  const event = new MouseEvent("click", {
+    view: window,
+    bubbles: true,
+    cancelable: true,
   });
-  const toggleTheme = useToggle(isDark);
-  const handleToggleTheme = (event: MouseEvent) => {
-    const x = event.clientX;
-    const y = event.clientY;
-
-    startViewTransition(
-      () => {
-        toggleTheme();
-      },
-      { x, y },
-    );
-  };
-  const triggerBtn = ref();
-  const handleLogout = () => {
-    logout();
-  };
-  const setDropDownVisible = () => {
-    const event = new MouseEvent('click', {
-      view: window,
-      bubbles: true,
-      cancelable: true,
-    });
-    triggerBtn.value.dispatchEvent(event);
-  };
-  const toggleDrawerMenu = inject('toggleDrawerMenu') as () => void;
+  triggerBtn.value.dispatchEvent(event);
+};
+const toggleDrawerMenu = inject("toggleDrawerMenu") as () => void;
 </script>
 
-<style scoped lang="less">
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    height: 100%;
-    background-color: var(--color-bg-2);
-    border-bottom: 1px solid var(--color-border);
+<style scoped lang="scss">
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  background-color: var(--color-bg-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.left-side {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+
+  .logo-img {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.center-side {
+  flex: 1;
+}
+
+.right-side {
+  display: flex;
+  padding-right: 20px;
+  list-style: none;
+
+  :deep(.locale-select) {
+    border-radius: 20px;
   }
 
-  .left-side {
+  li {
     display: flex;
     align-items: center;
-    padding-left: 20px;
-
-    .logo-img {
-      width: 32px;
-      height: 32px;
-    }
+    padding: 0 10px;
   }
 
-  .center-side {
-    flex: 1;
+  a {
+    color: var(--color-text-1);
+    text-decoration: none;
   }
 
-  .right-side {
-    display: flex;
-    padding-right: 20px;
-    list-style: none;
-
-    :deep(.locale-select) {
-      border-radius: 20px;
-    }
-
-    li {
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-    }
-
-    a {
-      color: var(--color-text-1);
-      text-decoration: none;
-    }
-
-    .nav-btn {
-      color: rgb(var(--gray-8));
-      font-size: 16px;
-      border-color: rgb(var(--gray-2));
-    }
-
-    .trigger-btn {
-      position: absolute;
-      bottom: 14px;
-      margin-left: 14px;
-    }
+  .nav-btn {
+    color: rgb(var(--gray-8));
+    font-size: 16px;
+    border-color: rgb(var(--gray-2));
   }
+
+  .trigger-btn {
+    position: absolute;
+    bottom: 14px;
+    margin-left: 14px;
+  }
+}
 </style>
 
-<style lang="less">
-  .message-popover {
-    .arco-popover-content {
-      margin-top: 0;
-    }
+<style lang="scss">
+.message-popover {
+  .arco-popover-content {
+    margin-top: 0;
   }
+}
 </style>

@@ -1,12 +1,12 @@
-import axios from 'axios';
+import axios from "axios";
 import type {
   AxiosResponse,
   InternalAxiosRequestConfig,
   AxiosError,
-} from 'axios';
-import { Message, Modal } from '@arco-design/web-vue';
-import eventBus from '@/utils/event-bus';
-import { reportSecurityError } from '@/utils/security';
+} from "axios";
+import { Message, Modal } from "@arco-design/web-vue";
+import eventBus from "@/utils/event-bus";
+import { reportSecurityError } from "@/utils/security";
 
 export interface HttpResponse<T = unknown> {
   status: number;
@@ -20,7 +20,7 @@ if (import.meta.env.VITE_API_BASE_URL) {
 }
 
 // 认证基于 httpOnly Cookie（后端 Sa-Token），前端不保存/不携带 token
-const REFRESH_URL = '/auth/refresh';
+const REFRESH_URL = "/auth/refresh";
 const AUTH_FAILURE_CODES = [401, 50008, 50012, 50014];
 
 // Token 刷新状态（同一时间只允许一个刷新请求，其余 401 请求排队）
@@ -43,7 +43,7 @@ const processQueue = (error: Error | null) => {
 };
 
 const isRefreshUrl = (url?: string): boolean =>
-  !!url && url.includes('/auth/refresh');
+  !!url && url.includes("/auth/refresh");
 
 /**
  * 调用后端刷新接口。access/refresh token 均由 httpOnly Cookie 携带，
@@ -65,12 +65,12 @@ function handleAuthFailure() {
   if (authFailureModalShown) return;
   authFailureModalShown = true;
   Modal.error({
-    title: '登录已过期',
-    content: '请重新登录',
-    okText: '重新登录',
+    title: "登录已过期",
+    content: "请重新登录",
+    okText: "重新登录",
     onOk() {
       authFailureModalShown = false;
-      eventBus.emit('auth:failed', { reason: 'token_expired' });
+      eventBus.emit("auth:failed", { reason: "token_expired" });
     },
   });
 }
@@ -86,7 +86,7 @@ const handleAuthExpired = (
     ._retry;
   if (retried || isRefreshUrl(config.url)) {
     handleAuthFailure();
-    return Promise.reject(new Error('登录已过期，请重新登录'));
+    return Promise.reject(new Error("登录已过期，请重新登录"));
   }
 
   if (isRefreshing) {
@@ -119,7 +119,7 @@ axios.interceptors.response.use(
 
     const successCodes = [200, 0, 20000, undefined];
     if (res.code !== undefined && !successCodes.includes(res.code)) {
-      const errorMsg = res.msg || res.message || 'Error';
+      const errorMsg = res.msg || res.message || "Error";
 
       // 业务码 401：token 过期，尝试刷新
       if (AUTH_FAILURE_CODES.includes(res.code)) {
@@ -149,7 +149,7 @@ axios.interceptors.response.use(
       (error.response?.data as any)?.msg ||
       (error.response?.data as any)?.message ||
       error.message ||
-      '请求错误';
+      "请求错误";
 
     // HTTP 401：token 过期，尝试刷新后重试（刷新接口本身或已重试过的请求除外）
     if (
@@ -163,7 +163,7 @@ axios.interceptors.response.use(
 
     // 记录安全错误
     if (status === 401 || status === 403) {
-      reportSecurityError(new Error(msg), 'auth_error');
+      reportSecurityError(new Error(msg), "auth_error");
     }
 
     Message.error({

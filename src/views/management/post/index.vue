@@ -83,19 +83,19 @@
         <template #category="{ record }">
           <div class="meta-cell">
             <a-tag size="small" color="arcoblue">
-              {{ record.parentCategoryName || record.categoryName || '-' }}
+              {{ record.parentCategoryName || record.categoryName || "-" }}
             </a-tag>
             <template v-if="record.tagNames && record.tagNames.length > 0">
               <a-tooltip v-if="record.tagNames.length > 2" position="top">
                 <a-tag size="small" color="green">
-                  {{ record.tagNames.slice(0, 2).join('、') }}...
+                  {{ record.tagNames.slice(0, 2).join("、") }}...
                 </a-tag>
                 <template #content>
-                  <span>{{ record.tagNames.join('、') }}</span>
+                  <span>{{ record.tagNames.join("、") }}</span>
                 </template>
               </a-tooltip>
               <a-tag v-else size="small" color="green">
-                {{ record.tagNames.join('、') }}
+                {{ record.tagNames.join("、") }}
               </a-tag>
             </template>
           </div>
@@ -126,14 +126,14 @@
               size="mini"
               @click="handleTogglePinned(record)"
             >
-              {{ record.isPinned === 'PINNED' ? '取消置顶' : '置顶' }}
+              {{ record.isPinned === "PINNED" ? "取消置顶" : "置顶" }}
             </a-button>
             <a-button
               type="text"
               size="mini"
               @click="handleToggleEssential(record)"
             >
-              {{ record.isEssential === 'ESSENTIAL' ? '取消精华' : '精华' }}
+              {{ record.isEssential === "ESSENTIAL" ? "取消精华" : "精华" }}
             </a-button>
             <a-popconfirm
               content="确定删除该帖子？"
@@ -167,7 +167,7 @@
           <a-tag v-if="currentPost?.parentCategoryName" color="arcoblue">
             {{ currentPost?.parentCategoryName }}
           </a-tag>
-          <a-tag color="cyan">{{ currentPost?.categoryName || '-' }}</a-tag>
+          <a-tag color="cyan">{{ currentPost?.categoryName || "-" }}</a-tag>
         </a-descriptions-item>
         <a-descriptions-item label="时间">{{
           formatDate(currentPost?.createdAt)
@@ -207,264 +207,264 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, computed, onMounted } from 'vue';
-  import { Message } from '@arco-design/web-vue';
-  import type { TableColumnData, TableData } from '@arco-design/web-vue';
-  import {
-    getPostList,
-    getPostDetail,
-    deletePost,
-    setPostPinned,
-    setPostEssential,
-    type Post,
-  } from '@/api/post';
-  import { getCategoryTree, type Category } from '@/api/category';
-  import { MarkdownRenderer } from '@/components';
-  import { formatDate } from '@/utils/format';
-  import { useTableData as useTableManagement } from '@/hooks/use-table-data';
+import { ref, computed, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
+import type { TableColumnData, TableData } from "@arco-design/web-vue";
+import {
+  getPostList,
+  getPostDetail,
+  deletePost,
+  setPostPinned,
+  setPostEssential,
+  type Post,
+} from "@/api/post";
+import { getCategoryTree, type Category } from "@/api/category";
+import { MarkdownRenderer } from "@/components";
+import { formatDate } from "@/utils/format";
+import { useTableData as useTableManagement } from "@/hooks/use-table-data";
 
-  const detailVisible = ref(false);
-  const detailLoading = ref(false);
-  const currentPost = ref<Post | null>(null);
+const detailVisible = ref(false);
+const detailLoading = ref(false);
+const currentPost = ref<Post | null>(null);
 
-  // 筛选条件
-  const filterCategoryId = ref<number | undefined>(undefined);
-  const filterStatus = ref<string | undefined>(undefined);
-  const categoryTree = ref<Category[]>([]);
+// 筛选条件
+const filterCategoryId = ref<number | undefined>(undefined);
+const filterStatus = ref<string | undefined>(undefined);
+const categoryTree = ref<Category[]>([]);
 
-  // 使用可复用的表格管理 composable
-  const {
-    tableData,
-    loading,
-    pagination,
-    fetchData,
-    onPageChange,
-    onPageSizeChange,
-    refresh,
-  } = useTableManagement<Post>({
-    fetchFn: async () => {
-      let pinnedFilter: boolean | undefined;
-      let essentialFilter: boolean | undefined;
-      if (filterStatus.value === 'PINNED') {
-        pinnedFilter = true;
-      } else if (filterStatus.value === 'NORMAL') {
-        pinnedFilter = false;
-      }
-      if (filterStatus.value === 'ESSENTIAL') {
-        essentialFilter = true;
-      } else if (filterStatus.value === 'NORMAL') {
-        essentialFilter = false;
-      }
-
-      const res = await getPostList({
-        pageNumber: pagination.current,
-        pageSize: pagination.pageSize,
-        categoryId: filterCategoryId.value,
-        isPinned: pinnedFilter,
-        isEssential: essentialFilter,
-      });
-
-      // 客户端排序
-      tableData.value = (res.records || []).sort((a, b) => a.id - b.id);
-      return res;
-    },
-    pageSize: 10,
-    immediate: false,
-  });
-
-  // 扁平化分类树用于下拉选择
-  const flatCategories = computed(() => {
-    const result: { id: number; label: string }[] = [];
-    const flatten = (items: Category[], prefix = '') => {
-      items.forEach((item) => {
-        const label = prefix ? `${prefix} / ${item.name}` : item.name;
-        result.push({ id: item.id, label });
-        if (item.children?.length) flatten(item.children, label);
-      });
-    };
-    flatten(categoryTree.value);
-    return result;
-  });
-
-  const columns: TableColumnData[] = [
-    { title: 'ID', dataIndex: 'id', width: 70, align: 'center' },
-    {
-      title: '标题',
-      slotName: 'titleCell',
-      width: 240,
-      ellipsis: true,
-      tooltip: true,
-    },
-    { title: '作者', slotName: 'user', width: 130 },
-    { title: '分类 / 标签', slotName: 'category', width: 180 },
-    {
-      title: '浏览 / 点赞 / 评论 / 收藏',
-      slotName: 'stats',
-      width: 230,
-      align: 'center',
-    },
-    {
-      title: '发布时间',
-      dataIndex: 'createdAt',
-      width: 165,
-      render: ({ record }: { record: TableData }) =>
-        formatDate((record as Post).createdAt),
-    },
-    {
-      title: '操作',
-      slotName: 'operations',
-      width: 320,
-      align: 'center',
-      fixed: 'right',
-    },
-  ];
-
-  const fetchCategories = async () => {
-    try {
-      const res = await getCategoryTree();
-      categoryTree.value = res || [];
-    } catch {
-      categoryTree.value = [];
+// 使用可复用的表格管理 composable
+const {
+  tableData,
+  loading,
+  pagination,
+  fetchData,
+  onPageChange,
+  onPageSizeChange,
+  refresh,
+} = useTableManagement<Post>({
+  fetchFn: async () => {
+    let pinnedFilter: boolean | undefined;
+    let essentialFilter: boolean | undefined;
+    if (filterStatus.value === "PINNED") {
+      pinnedFilter = true;
+    } else if (filterStatus.value === "NORMAL") {
+      pinnedFilter = false;
     }
-  };
-
-  const handleSearch = () => {
-    refresh();
-  };
-
-  const viewPost = async (post: Post) => {
-    detailLoading.value = true;
-    detailVisible.value = true;
-    try {
-      const res = await getPostDetail(post.id);
-      currentPost.value = res;
-    } catch {
-      Message.error('获取详情失败');
-      detailVisible.value = false;
-    } finally {
-      detailLoading.value = false;
+    if (filterStatus.value === "ESSENTIAL") {
+      essentialFilter = true;
+    } else if (filterStatus.value === "NORMAL") {
+      essentialFilter = false;
     }
-  };
 
-  const handleTogglePinned = async (post: Post) => {
-    try {
-      await setPostPinned(post.id, post.isPinned !== 'PINNED');
-      Message.success('操作成功');
-      fetchData();
-    } catch {
-      Message.error('操作失败');
-    }
-  };
+    const res = await getPostList({
+      pageNumber: pagination.current,
+      pageSize: pagination.pageSize,
+      categoryId: filterCategoryId.value,
+      isPinned: pinnedFilter,
+      isEssential: essentialFilter,
+    });
 
-  const handleToggleEssential = async (post: Post) => {
-    try {
-      await setPostEssential(post.id, post.isEssential !== 'ESSENTIAL');
-      Message.success('操作成功');
-      fetchData();
-    } catch {
-      Message.error('操作失败');
-    }
-  };
+    // 客户端排序
+    tableData.value = (res.records || []).sort((a, b) => a.id - b.id);
+    return res;
+  },
+  pageSize: 10,
+  immediate: false,
+});
 
-  const handleDelete = async (id: number) => {
-    try {
-      await deletePost(id);
-      Message.success('已删除');
-      fetchData();
-    } catch {
-      Message.error('删除失败');
-    }
+// 扁平化分类树用于下拉选择
+const flatCategories = computed(() => {
+  const result: { id: number; label: string }[] = [];
+  const flatten = (items: Category[], prefix = "") => {
+    items.forEach((item) => {
+      const label = prefix ? `${prefix} / ${item.name}` : item.name;
+      result.push({ id: item.id, label });
+      if (item.children?.length) flatten(item.children, label);
+    });
   };
+  flatten(categoryTree.value);
+  return result;
+});
 
-  onMounted(() => {
-    fetchCategories();
+const columns: TableColumnData[] = [
+  { title: "ID", dataIndex: "id", width: 70, align: "center" },
+  {
+    title: "标题",
+    slotName: "titleCell",
+    width: 240,
+    ellipsis: true,
+    tooltip: true,
+  },
+  { title: "作者", slotName: "user", width: 130 },
+  { title: "分类 / 标签", slotName: "category", width: 180 },
+  {
+    title: "浏览 / 点赞 / 评论 / 收藏",
+    slotName: "stats",
+    width: 230,
+    align: "center",
+  },
+  {
+    title: "发布时间",
+    dataIndex: "createdAt",
+    width: 165,
+    render: ({ record }: { record: TableData }) =>
+      formatDate((record as Post).createdAt),
+  },
+  {
+    title: "操作",
+    slotName: "operations",
+    width: 320,
+    align: "center",
+    fixed: "right",
+  },
+];
+
+const fetchCategories = async () => {
+  try {
+    const res = await getCategoryTree();
+    categoryTree.value = res || [];
+  } catch {
+    categoryTree.value = [];
+  }
+};
+
+const handleSearch = () => {
+  refresh();
+};
+
+const viewPost = async (post: Post) => {
+  detailLoading.value = true;
+  detailVisible.value = true;
+  try {
+    const res = await getPostDetail(post.id);
+    currentPost.value = res;
+  } catch {
+    Message.error("获取详情失败");
+    detailVisible.value = false;
+  } finally {
+    detailLoading.value = false;
+  }
+};
+
+const handleTogglePinned = async (post: Post) => {
+  try {
+    await setPostPinned(post.id, post.isPinned !== "PINNED");
+    Message.success("操作成功");
     fetchData();
-  });
+  } catch {
+    Message.error("操作失败");
+  }
+};
 
-  defineOptions({
-    name: 'PostManagement',
-  });
+const handleToggleEssential = async (post: Post) => {
+  try {
+    await setPostEssential(post.id, post.isEssential !== "ESSENTIAL");
+    Message.success("操作成功");
+    fetchData();
+  } catch {
+    Message.error("操作失败");
+  }
+};
+
+const handleDelete = async (id: number) => {
+  try {
+    await deletePost(id);
+    Message.success("已删除");
+    fetchData();
+  } catch {
+    Message.error("删除失败");
+  }
+};
+
+onMounted(() => {
+  fetchCategories();
+  fetchData();
+});
+
+defineOptions({
+  name: "PostManagement",
+});
 </script>
 
-<style lang="less" scoped>
-  .container {
-    min-height: 100%;
-    padding: 20px;
-    background: var(--color-bg-2);
+<style lang="scss" scoped>
+.container {
+  min-height: 100%;
+  padding: 20px;
+  background: var(--color-bg-2);
+}
+
+.general-card {
+  border-radius: 8px;
+
+  :deep(.arco-card-header) {
+    border-bottom: none;
+  }
+}
+
+.title {
+  font-weight: 500;
+}
+
+.tag {
+  flex-shrink: 0;
+  margin-left: 6px;
+  font-size: 11px;
+}
+
+.name {
+  max-width: 70px;
+  overflow: hidden;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.meta-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.stats-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.stat-pill {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+  padding: 2px 8px;
+  color: var(--color-text-3);
+  font-size: 12px;
+  line-height: 20px;
+  background: var(--color-fill-1);
+  border-radius: 10px;
+
+  &.like {
+    color: rgb(var(--red-5));
+    background: rgba(var(--red-1), 0.5);
   }
 
-  .general-card {
-    border-radius: 8px;
-
-    :deep(.arco-card-header) {
-      border-bottom: none;
-    }
+  &.comment {
+    color: rgb(var(--arcoblue-5));
+    background: rgba(var(--arcoblue-1), 0.5);
   }
 
-  .title {
-    font-weight: 500;
+  &.star {
+    color: rgb(var(--gold-6));
+    background: rgba(var(--gold-1), 0.6);
   }
+}
 
-  .tag {
-    flex-shrink: 0;
-    margin-left: 6px;
-    font-size: 11px;
-  }
-
-  .name {
-    max-width: 70px;
-    overflow: hidden;
-    font-size: 13px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .meta-cell {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    align-items: center;
-  }
-
-  .stats-wrap {
-    display: flex;
-    justify-content: center;
-  }
-
-  .stat-pill {
-    display: inline-flex;
-    gap: 3px;
-    align-items: center;
-    padding: 2px 8px;
-    color: var(--color-text-3);
-    font-size: 12px;
-    line-height: 20px;
-    background: var(--color-fill-1);
-    border-radius: 10px;
-
-    &.like {
-      color: rgb(var(--red-5));
-      background: rgba(var(--red-1), 0.5);
-    }
-
-    &.comment {
-      color: rgb(var(--arcoblue-5));
-      background: rgba(var(--arcoblue-1), 0.5);
-    }
-
-    &.star {
-      color: rgb(var(--gold-6));
-      background: rgba(var(--gold-1), 0.6);
-    }
-  }
-
-  .post-content {
-    max-height: 400px;
-    padding: 12px 16px;
-    overflow-y: auto;
-    font-size: 13px;
-    line-height: 1.8;
-    background: var(--color-fill-1);
-    border-radius: 6px;
-  }
+.post-content {
+  max-height: 400px;
+  padding: 12px 16px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.8;
+  background: var(--color-fill-1);
+  border-radius: 6px;
+}
 </style>
