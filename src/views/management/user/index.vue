@@ -148,7 +148,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from "vue";
 import { Message } from "@arco-design/web-vue";
 import type { TableColumnData } from "@arco-design/web-vue";
 import {

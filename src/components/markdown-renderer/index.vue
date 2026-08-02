@@ -4,7 +4,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
 import renderMarkdown from "@/utils/markdown";
 
 const props = withDefaults(

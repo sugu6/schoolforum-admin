@@ -45,8 +45,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, provide, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import { useAppStore, useUserStore } from "@/store";
 import NavBar from "@/components/navbar/index.vue";
 import Menu from "@/components/menu/index.vue";

@@ -5,6 +5,7 @@ import vuePlugin from 'eslint-plugin-vue';
 import importX from 'eslint-plugin-import-x';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
+import autoImportGlobals from './.eslintrc-auto-import.json' with { type: 'json' };
 
 export default [
   {
@@ -26,6 +27,7 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
+        ...autoImportGlobals.globals,
       },
     },
     plugins: {

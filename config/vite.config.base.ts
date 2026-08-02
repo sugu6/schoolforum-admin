@@ -3,12 +3,14 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import configArcoStyleImportPlugin from './plugin/arcoStyleImport';
 import configArcoResolverPlugin from './plugin/arcoResolver';
+import configAutoImportPlugin from './plugin/autoImport';
 
 export default defineConfig({
   plugins: [
     vue(),
     configArcoStyleImportPlugin(),
     configArcoResolverPlugin(),
+    configAutoImportPlugin(),
   ],
   resolve: {
     alias: [

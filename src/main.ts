@@ -1,4 +1,3 @@
-import { createApp } from "vue";
 import ArcoVueIcon from "@arco-design/web-vue/es/icon";
 import eventBus from "@/utils/event-bus";
 import router from "./router";

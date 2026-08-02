@@ -1,5 +1,3 @@
-import { ref, reactive, onMounted } from "vue";
-import type { Ref } from "vue";
 import type { PageResponse } from "@/types/api";
 
 interface UseTableDataOptions<T> {

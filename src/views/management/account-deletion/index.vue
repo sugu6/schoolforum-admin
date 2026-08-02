@@ -70,7 +70,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from "vue";
 import { Message } from "@arco-design/web-vue";
 import dayjs from "dayjs";
 import type { TableColumnData } from "@arco-design/web-vue";

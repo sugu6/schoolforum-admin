@@ -1,4 +1,3 @@
-import { defineStore } from "pinia";
 import {
   login as userLogin,
   logout as userLogout,

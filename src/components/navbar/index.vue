@@ -136,8 +136,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, inject } from "vue";
-import { useDark, useToggle, useFullscreen } from "@vueuse/core";
 import { useAppStore, useUserStore } from "@/store";
 import { LOCALE_OPTIONS } from "@/locale";
 import useLocale from "@/hooks/locale";

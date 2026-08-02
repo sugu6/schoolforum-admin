@@ -1,15 +1,5 @@
 <script lang="ts">
-import {
-  defineComponent,
-  ref,
-  h,
-  computed,
-  resolveComponent,
-  Component,
-} from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter, RouteRecordRaw } from "vue-router";
-import type { RouteMeta } from "vue-router";
 import { Menu, MenuItem, SubMenu } from "@arco-design/web-vue";
 import { useAppStore } from "@/store";
 import { listenerRouteChange } from "@/utils/route-listener";

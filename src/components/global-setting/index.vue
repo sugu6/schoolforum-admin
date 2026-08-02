@@ -23,10 +23,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
 import { Message } from "@arco-design/web-vue";
 import { useI18n } from "vue-i18n";
-import { useClipboard } from "@vueuse/core";
 import { useAppStore } from "@/store";
 import Block from "./block.vue";
 

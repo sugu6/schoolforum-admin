@@ -1,4 +1,3 @@
-import { computed } from "vue";
 import { EChartsOption } from "echarts";
 import { useAppStore } from "@/store";
 

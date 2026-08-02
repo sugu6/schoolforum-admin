@@ -19,7 +19,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, onUnmounted } from "vue";
 import type { RouteLocationNormalized } from "vue-router";
 import {
   listenerRouteChange,

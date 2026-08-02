@@ -73,7 +73,7 @@ src/
 │   ├── dashboard.ts        # 仪表盘 API：queryContentData, queryPopularList
 │   └── message.ts          # 消息 API：queryMessageList, setMessageStatus, queryChatList
 │
-├── hooks/                  # 组合式函数（request, permission, locale, themes, loading, responsive, user, chart-option, visible）
+├── hooks/                  # 组合式函数（chart-option, loading, locale, permission, responsive, use-table-data, user）
 ├── layout/
 │   ├── default-layout.vue  # 主布局：navbar + sidebar（移动端 drawer） + tab-bar + content + footer
 │   └── page-layout.vue     # 路由页面内容包装器
@@ -275,6 +275,12 @@ interface Comment {
 
 所有 scripts 通过 `--config` 指定对应文件。
 
+### 自动导入（unplugin-auto-import）
+- `config/plugin/autoImport.ts` 配置 `unplugin-auto-import`，自动导入 `vue` / `vue-router` / `pinia` / `@vueuse/core` 的值 API（ref、computed、onMounted、useRouter、defineStore、useDark 等）
+- 生成的类型声明 `src/auto-imports.d.ts`（tsconfig include 自动覆盖），ESLint globals 由 `.eslintrc-auto-import.json` 提供（eslint.config.js 中引用）
+- 类型导入（PropType、RouteRecordRaw 等）和 `createRouter`/`createWebHistory` 等工厂函数仍需手动导入
+- `unplugin-vue-components` 通过 `ArcoResolver` 自动注册 Arco 组件
+
 ### 状态管理
 - **app store**：主题/侧边栏/设备类型/服务端菜单。`toggleTheme(dark)` 切换 `arco-theme` 属性
 - **user store**：认证状态、用户信息、角色。`info()` 从 `/users/info` 获取用户详情
@@ -283,7 +289,7 @@ interface Comment {
 ### 代码规范
 - **ESLint**：`airbnb-base` + `@typescript-eslint/recommended` + `plugin:vue/vue3-recommended` + `plugin:prettier/recommended`
 - **Prettier**：使用默认配置（`.prettierrc.cjs` 为空），不维护自定义格式规则
-- **Stylelint**：`stylelint-config-recommended-vue/scss`（基础 Vue + SCSS 配置）
+- **Stylelint**：`stylelint-config-standard-scss` + `stylelint-config-recommended-vue/scss`（standard 基础规则 + Vue/SCSS 适配）
 - **Husky**：`pre-commit` 运行 `pnpm lint-staged`；`commit-msg` 运行 `pnpm commitlint --edit`
 - **提交格式**：Conventional Commits (`type(scope): description`)
 

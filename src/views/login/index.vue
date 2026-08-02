@@ -16,7 +16,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
 import logoSvg from "@/assets/logo.svg?url";
 import LoginBanner from "./components/banner.vue";
 import LoginForm from "./components/login-form.vue";

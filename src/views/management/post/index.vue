@@ -207,7 +207,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
 import { Message } from "@arco-design/web-vue";
 import type { TableColumnData, TableData } from "@arco-design/web-vue";
 import {

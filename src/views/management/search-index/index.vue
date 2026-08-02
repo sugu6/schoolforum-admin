@@ -66,7 +66,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
 import { Message, Modal } from "@arco-design/web-vue";
 import { rebuildIndex, clearIndex } from "@/api/search";
 import dayjs from "dayjs";

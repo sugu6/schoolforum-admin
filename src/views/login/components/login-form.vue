@@ -59,12 +59,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
-import { useRouter } from "vue-router";
 import { Message } from "@arco-design/web-vue";
 import { ValidatedError } from "@arco-design/web-vue/es/form/interface";
 import { useI18n } from "vue-i18n";
-import { useStorage } from "@vueuse/core";
 import { useUserStore } from "@/store";
 import useLoading from "@/hooks/loading";
 import type { LoginData } from "@/api/user";

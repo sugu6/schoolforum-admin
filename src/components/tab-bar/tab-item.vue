@@ -57,8 +57,6 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import { useTabBarStore } from "@/store";
 import type { TagProps } from "@/store/modules/tab-bar/types";
 import { DEFAULT_ROUTE_NAME, REDIRECT_ROUTE_NAME } from "@/router/constants";

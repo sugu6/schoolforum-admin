@@ -321,8 +321,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from "vue";
-import { useRouter } from "vue-router";
 import { useUserStore } from "@/store";
 import {
   queryDashboardStats,
